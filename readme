@@ -1,0 +1,76 @@
+# projet-soa-ecommerce-enit-v1
+
+
+# Liste des microservices
+- catalog: responsable des produits exposés et de leurs caractéristiques + prix de référence
+- pricing: responsable de déterminer le prix d'un produit ou d'un ensemble de produits (idProduit+quantité). utiliser pour déterminer le prix d'un panier ou d'une commande.
+  - gère la liste des prix des produits
+  - gère les promotions (idProduit+pourcentage de réduction)
+- inventory : responsable de 
+  - la gestion des quantités de produits dans le stock (idProduit+quantité totale + quantité reservée)
+      - enregistrer une reception d'un produit
+      - enregistrer la sortie d'une commande.
+  - la réservation de produits d'une commande en attente de paiement.
+  - la libération des produits d'une commande annulée
+- search : 
+  - indexer la description d'un produit (idProduit+description)
+  - recherche d'un produit via texte libre
+  - recherche des produits similaires à un produit (idProduit)
+- cart : gestion du panier
+- order : gère le processus de commande depuis la validation du panier, à la reservation, au paiement jusqu'au déclenchement de la livraison.
+- payment : gère les cartes des clients et les transactions avec la banque
+  - gère un ensemble de cartes bancaires associées aux clients (idUser,codeCarte,CodeSecret).
+  - reçoit l'ordre de paiement depuis le microservice command et tente de le faire chez la banque.
+- shipping :  responsable de la livraison d'une commande payée 
+  - gère un ensemble de d'adresses associées aux clients (idUser,adresse).
+  - reçoit l'ordre de livraison du microservice order après paiement.
+  - permet de gérer le cycle d'une livraison (livraison en attente, livraison en cours, livraison effectuée)
+- review : responsable des avis (commentaires) sur les produits:
+    - donner un avis
+    - récupérer les avis sur un produit
+- rating : responsable des notes que donnent les utilisateurs aux produits
+    - donner une note à un produit
+    - récupérer les notes d'un utilisateur
+    - récupérer les notes d'un produit
+- mailing : (voir [le service mailtrap](https://mailtrap.io/) et [l'exemple](https://quarkus.io/guides/mailer))
+  - gère les templates des emails dans la BD
+  - gère les emails des clients
+  - envoie les emails de confirmation de paiement et de livraison en cours
+
+-bank : service externe fourni tel quel (non fiable) 
+    - un paramètre permet d'augmenter le temps de traitement et tester ainsi les timeouts
+    - un paramètre permet de simuler une non fiabilité avec une probabilité d'erreur pour tester la résilience des autres microservices. 
+# ports
+vérifier les ports de chaque microservice
+- cart : 8081
+- catalog : 8082
+- inventory : 8083
+- order : 8084
+- payment : 8085
+- pricing : 8086
+- recommendation: 8087
+- review : 8088
+- search : 8089
+- shipping : 8090
+- mailing: 8091
+- -bank: 8099
+
+# Technologies
+- données transactionnelles : postgresql (base par microservice déjà configurée dans docker-compose)
+- index externe pour le texte (solr) : s'inspirer du [tutoriel suivant](https://www.baeldung.com/apache-solrj). possibilité de remplacer par elasticsearch si besoin.
+- base de données en mémoire : utiliser une map java en mémoire dans la première version.
+
+# Prérequis:
+- java 17 ou plus (variable JAVA_HOME configurée)
+- - Git
+- [SDKman](https://sdkman.io/) et [quarkus CLI](https://quarkus.io/guides/cli-tooling) facilitent la [création](https://quarkus.io/guides/cli-tooling#project-creation) d'applications quarkus.
+- maven récent (variable MAVEN_HOME configurée)
+- docker (avec WSL sur windows)
+- VS code avec les extensions java quarkus docker redhat
+- démarrer dans le terminal (interne à vscode) en mode developpement avec la commande mvn clean compile quarkus:dev
+- la configuration est dans le fichier application.properties
+- par defaut l'application tourne sur localhost:PORT (l'interface qui s'affiche contient un lien vers dev-ui qui liste les extensions/modules installés)
+- dev-ui donne l'accès à swagger pour tester les APIs
+- pour lancer l'infrastructure sur docker click droit dans le fichier docker-compose et faire docker compose up
+
+pour voir d'autres exemples avec la doc aller sur [la documentation](https://quarkus.io/guides/)
