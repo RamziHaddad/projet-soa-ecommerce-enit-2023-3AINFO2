@@ -28,9 +28,8 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
-    public List<Product> findSimilarProductsOf(ProductId productId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findSimilarProductsOf'");
+    public List<ProductId> findSimilarProductsOf(ProductId productId) throws SolrServerException, IOException {
+        return searchRepository.findSimilarProductsOf(productId);
     }
     
 }

@@ -5,12 +5,13 @@ import java.util.List;
 
 import org.acme.api.DTOs.AddProductDTO;
 import org.acme.api.DTOs.FindProductByKeywordDTO;
+import org.acme.api.DTOs.FindSimilarProductsOfDTO;
 import org.acme.application.services.SearchService;
 import org.acme.domain.Product;
+import org.acme.domain.ProductId;
 import org.apache.solr.client.solrj.SolrServerException;
 
 import jakarta.inject.Inject;
-import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 @Path("/search")
@@ -29,5 +30,11 @@ public class SearchResource {
     @Path("/find-by-keyword")
     public List<Product> findProductByKeyword(FindProductByKeywordDTO findProductByKeywordDTO)throws SolrServerException, IOException{
         return searchService.findProductsByKeyword(findProductByKeywordDTO.keyword());
+    }
+
+    @POST
+    @Path("/find-by-similarity")
+    public List<ProductId> findSimilarProductsOf(FindSimilarProductsOfDTO findProductByKeywordDTO)throws SolrServerException, IOException{
+        return searchService.findSimilarProductsOf(findProductByKeywordDTO.productId());
     }
 }

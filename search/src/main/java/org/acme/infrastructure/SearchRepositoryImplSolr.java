@@ -9,6 +9,7 @@ import org.acme.domain.Description;
 import org.acme.domain.Product;
 import org.acme.domain.ProductId;
 import org.acme.domain.SearchRepository;
+import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
@@ -27,7 +28,7 @@ public class SearchRepositoryImplSolr implements SearchRepository{
     @Override
     public List<Product> findAll() throws SolrServerException, IOException {
         List<Product> result = new ArrayList<Product>();
-        QueryResponse response = solrConn.search("*:*");
+        QueryResponse response = solrConn.search(new SolrQuery("*:*"));
         SolrDocumentList rs = response.getResults();
         for(SolrDocument document:rs){
             System.out.println();
@@ -38,7 +39,7 @@ public class SearchRepositoryImplSolr implements SearchRepository{
     @Override
     public List<Product> findProductsByKeyword(String keyword) throws SolrServerException, IOException{
         List<Product> result = new ArrayList<Product>();
-        QueryResponse response = solrConn.search("description:"+keyword);
+        QueryResponse response = solrConn.search(new SolrQuery("description:"+keyword));
         SolrDocumentList rs = response.getResults();
         for(SolrDocument doc:rs){
             try{
@@ -62,6 +63,21 @@ public class SearchRepositoryImplSolr implements SearchRepository{
         doc.addField("id", product.getProductId().id().toString());
         doc.addField("description", product.getDescription().description());
         solrConn.addDocument(doc);
+    }
+
+    @Override
+    public List<ProductId> findSimilarProductsOf(ProductId productId) throws SolrServerException, IOException {
+        List<ProductId> resultat = new ArrayList<ProductId>();
+        SolrQuery query = new SolrQuery("id:"+productId.id());
+        query.set("qt", "/mlt");
+        query.set("fl", "*,score");
+        QueryResponse response = solrConn.search(query);
+        for(SolrDocument doc : response.getResults()){
+            resultat.add(new ProductId(UUID.fromString(doc.getFieldValue("id").toString())));
+        }
+        return resultat;
+
+        
     }
     
 }

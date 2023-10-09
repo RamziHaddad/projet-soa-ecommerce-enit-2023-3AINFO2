@@ -11,6 +11,6 @@ import org.apache.solr.client.solrj.SolrServerException;
 public interface SearchService {
     void indexProduct(ProductId productId, Description description) throws SolrServerException, IOException;
     List<Product> findProductsByKeyword(String keyword) throws SolrServerException, IOException;
-    List<Product> findSimilarProductsOf(ProductId productId) throws SolrServerException, IOException;
+    List<ProductId> findSimilarProductsOf(ProductId productId) throws SolrServerException, IOException;
     
 }

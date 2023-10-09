@@ -10,4 +10,5 @@ public interface SearchRepository {
     List<Product> findAll()throws SolrServerException, IOException;
     List<Product> findProductsByKeyword(String keyword)throws SolrServerException, IOException;
     Product findProductById(ProductId productId)throws SolrServerException, IOException;
+    List<ProductId> findSimilarProductsOf(ProductId productId) throws SolrServerException, IOException;
 }

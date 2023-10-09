@@ -23,9 +23,8 @@ public class SolrConnection  {
         solrClient = new HttpSolrClient.Builder(solrUrl).build();
     }
 
-    public QueryResponse search(String query) throws SolrServerException, IOException {
-        SolrQuery solrQuery = new SolrQuery(query);
-        return solrClient.query(solrQuery);
+    public QueryResponse search(SolrQuery query) throws SolrServerException, IOException {
+        return solrClient.query(query);
     }
 
     public void addDocument(SolrInputDocument doc) throws SolrServerException, IOException {
