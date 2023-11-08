@@ -1,8 +1,8 @@
 package org.acme.infrastructure.mapper;
 
+import org.acme.Api.dto.CreateOrderDto;
+import org.acme.Api.dto.OrderViewDto;
 import org.acme.domain.model.Order;
-import org.acme.domain.model.dto.CreateOrderDto;
-import org.acme.domain.model.dto.OrderViewDto;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "quarkus")

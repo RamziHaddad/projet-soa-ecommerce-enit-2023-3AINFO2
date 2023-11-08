@@ -1,13 +1,14 @@
 package org.acme.application;
 
+import org.acme.Api.dto.CreateOrderDto;
+import org.acme.Api.dto.OrderViewDto;
+
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
-import org.acme.domain.model.dto.CreateOrderDto;
-import org.acme.domain.model.dto.OrderViewDto;
 
 @Path("/orders")
 public class OrderController {

@@ -1,4 +1,4 @@
-package org.acme.domain.model.dto;
+package org.acme.Api.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
