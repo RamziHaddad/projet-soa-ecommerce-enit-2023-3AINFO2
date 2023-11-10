@@ -18,6 +18,7 @@
   </properties>
   <dependencyManagement>
     <dependencies>
+
       <dependency>
         <groupId>${quarkus.platform.group-id}</groupId>
         <artifactId>${quarkus.platform.artifact-id}</artifactId>
@@ -90,6 +91,12 @@
       <version>1.18.24</version>
       <scope>provided</scope>
     </dependency>
+    
+<dependency>
+    <groupId>io.quarkus</groupId>
+    <artifactId>quarkus-resteasy</artifactId>
+</dependency>
+
 
   </dependencies>
   <build>
