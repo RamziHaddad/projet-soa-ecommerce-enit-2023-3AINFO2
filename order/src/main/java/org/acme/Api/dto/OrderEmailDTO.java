@@ -3,9 +3,9 @@ package org.acme.Api.dto;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import org.acme.domain.CommandeId;
+import org.acme.domain.OrderId;
 
-public record CommandeEmailDTO(CommandeId CommandeId, BigDecimal TotalAmount, LocalDateTime RecievedAT ) 
+public record OrderEmailDTO(OrderId CommandeId, BigDecimal TotalAmount, LocalDateTime RecievedAT ) 
 {
 
 }

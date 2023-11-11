@@ -6,6 +6,8 @@ import org.acme.Api.dto.OrderEmailDTO;
 import org.acme.Api.dto.OrderPayementDTO;
 import org.acme.Api.dto.OrderStockDTO;
 import org.acme.application.OrderService;
+import org.acme.domain.OrderId;
+
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
@@ -23,7 +25,7 @@ public class OrderResource {
     @Path("/create-order")
     public void createOrder(CreateOrderDto createOrderDto )
     {
-        orderService.createOrder(createOrderDto);
+        orderService.createOrder(createOrderDto.orderId(), createOrderDto.products(),createOrderDto.clientInfo(),createOrderDto.tatalAmount() );
     }
 
     // Step 2
@@ -33,6 +35,7 @@ public class OrderResource {
     // Step 3
     // check pricing
 
+
     // Step 4
     // start payment process
     @POST
@@ -40,9 +43,10 @@ public class OrderResource {
     @Path("/Start-payement")
     public void requestPayment(OrderPayementDTO orderPaymentInfo)
     {
-        orderService.startPaymentRequest(orderPaymentInfo);
+        orderService.startPaymentRequest(orderPaymentInfo.clintInfo(),orderPaymentInfo.OrderId(), orderPaymentInfo.TotalAmount() );
     }
-
+      
+    
     // In case of payment failure 
     // send notification mail of failed payment
     @POST
@@ -50,7 +54,7 @@ public class OrderResource {
     @Path("/NotificationMail-PaymentFailed")
     public void emailNotificationFailed(OrderEmailDTO orderEmailDTO)
     {
-        orderService.sendNotificationEmailFailed(orderEmailDTO);
+        orderService.sendNotificationEmailFailed(orderEmailDTO.CommandeId(), orderEmailDTO.RecievedAT(), orderEmailDTO.TotalAmount());
     }
 
     // Compensate transaction by releasing products from stock
@@ -59,7 +63,7 @@ public class OrderResource {
     @Path("/NotificationStock-LiberateItems")
     public void liberateItemsFromStock(OrderStockDTO orderStockDTO)
     {
-        orderService.liberateItemsFromStock(orderStockDTO);
+        orderService.liberateItemsFromStock(orderStockDTO.orderid(),orderStockDTO.products());
     }
 
     // In case of successful payment 
@@ -69,7 +73,7 @@ public class OrderResource {
     @Path("/NotificationMail-PaymentSucceed")
     public void emailNotificationSuccess(OrderEmailDTO orderEmailDTO)
     {
-        orderService.sendNotificationEmailSuccess(orderEmailDTO);
+        orderService.sendNotificationEmailSuccess(orderEmailDTO.CommandeId(), orderEmailDTO.RecievedAT(), orderEmailDTO.TotalAmount());
     }
 
     // Start delivery

@@ -3,14 +3,11 @@ package org.acme.domain;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Date;
-
 import org.acme.domain.model.DeliveryNotification;
 import org.acme.domain.model.PricingNotification;
 import org.acme.domain.model.StockNotification;
 import org.acme.domain.model.enums.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import lombok.Getter;
 
 
 
