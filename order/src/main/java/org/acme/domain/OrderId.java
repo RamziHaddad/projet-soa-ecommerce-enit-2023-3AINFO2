@@ -2,12 +2,12 @@ package org.acme.domain;
 
 import java.util.UUID;
 
-public record CommandeId(UUID id) {
-    public CommandeId(){
+public record OrderId(UUID id) {
+    public OrderId(){
         this(UUID.randomUUID());
     }
 
-    public CommandeId(UUID id) {
+    public OrderId(UUID id) {
         this.id = id;
     }
 
