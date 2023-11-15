@@ -19,4 +19,9 @@ public interface StockService {
      @Path("/LiberateProducts")
      void LiberateProducts( OrderId orderId, Products products);
 
+      
+     @POST
+     @Path("/CheckProducts")
+     void CheckProducts( OrderId orderId, Products products);
+
 }

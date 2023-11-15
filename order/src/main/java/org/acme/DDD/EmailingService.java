@@ -11,12 +11,12 @@ public interface EmailingService {
     
     @POST
     @Path("/SendEmailSuccessNotif")
-    void sendSuccessMail(OrderId CommandeId, BigDecimal TotalAmount, LocalDateTime RecievedAT);
+    void sendSuccessMail(OrderId CommandeId, BigDecimal TotalAmount, LocalDateTime RecievedAT, boolean status);
 
 
      @POST
     @Path("/SendEmailFailedNotif")
-    void sendFailedMail(OrderId CommandeId, BigDecimal TotalAmount, LocalDateTime RecievedAT);
+    void sendFailedMail(OrderId CommandeId, BigDecimal TotalAmount, LocalDateTime RecievedAT, boolean status);
 
 
 

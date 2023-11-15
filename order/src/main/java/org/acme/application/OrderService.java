@@ -25,9 +25,14 @@ public interface OrderService {
     
    
     void startPaymentRequest(Client clintInfo, OrderId orderId, BigDecimal totalAmount);
-    void sendNotificationEmailFailed(OrderId commandeId, LocalDateTime recievedAT, BigDecimal totalAmount);
+   
     void liberateItemsFromStock(OrderId orderid, Products products);
-    void sendNotificationEmailSuccess(OrderId commandeId, LocalDateTime recievedAT, BigDecimal totalAmount);
+    void checkStock(OrderId orderid, Products products);
+    void checkPricing(OrderId orderid, Products products);
+	void sendNotificationEmailFailed(OrderId commandeId, LocalDateTime recievedAT, BigDecimal totalAmount,
+			boolean orderstatus);
+	void sendNotificationEmailSuccess(OrderId commandeId, LocalDateTime recievedAT, BigDecimal totalAmount,
+			boolean orderstatus);
    
 
 }

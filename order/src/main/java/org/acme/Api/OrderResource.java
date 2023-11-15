@@ -4,6 +4,7 @@ import jakarta.ws.rs.Path;
 import org.acme.Api.dto.CreateOrderDto;
 import org.acme.Api.dto.OrderEmailDTO;
 import org.acme.Api.dto.OrderPayementDTO;
+import org.acme.Api.dto.OrderPrincingDTO;
 import org.acme.Api.dto.OrderStockDTO;
 import org.acme.application.OrderService;
 import org.acme.domain.OrderId;
@@ -30,11 +31,27 @@ public class OrderResource {
 
     // Step 2
     // check stock
+    @POST
+    @Transactional
+    @Path("/create-order")
+    public void checkStock(OrderStockDTO OrderStockDTO )
+    {
+        orderService.checkStock( OrderStockDTO.orderid(),OrderStockDTO.products());
+    }
+
+
     // in case of availability of items
 
     // Step 3
     // check pricing
-
+    
+     @POST
+    @Transactional
+    @Path("/Check-pricing")
+    public void Checkpricing(OrderPrincingDTO OrderPrincingDTO)
+    {
+        orderService.checkPricing(OrderPrincingDTO.orderid(), OrderPrincingDTO.products());
+    }
 
     // Step 4
     // start payment process
@@ -54,7 +71,9 @@ public class OrderResource {
     @Path("/NotificationMail-PaymentFailed")
     public void emailNotificationFailed(OrderEmailDTO orderEmailDTO)
     {
-        orderService.sendNotificationEmailFailed(orderEmailDTO.CommandeId(), orderEmailDTO.RecievedAT(), orderEmailDTO.TotalAmount());
+        
+        
+        orderService.sendNotificationEmailFailed(orderEmailDTO.CommandeId(), orderEmailDTO.RecievedAT(), orderEmailDTO.TotalAmount(),orderEmailDTO.Orderstatus());
     }
 
     // Compensate transaction by releasing products from stock
@@ -73,10 +92,24 @@ public class OrderResource {
     @Path("/NotificationMail-PaymentSucceed")
     public void emailNotificationSuccess(OrderEmailDTO orderEmailDTO)
     {
-        orderService.sendNotificationEmailSuccess(orderEmailDTO.CommandeId(), orderEmailDTO.RecievedAT(), orderEmailDTO.TotalAmount());
+        orderService.sendNotificationEmailSuccess(orderEmailDTO.CommandeId(), orderEmailDTO.RecievedAT(), orderEmailDTO.TotalAmount(),orderEmailDTO.Orderstatus() );
     }
 
     // Start delivery
+
+    @POST
+    @Transactional
+    @Path("/Start-Delivery")
+    public void StartDelivery(OrderEmailDTO orderEmailDTO)
+    {
+        orderService.sendNotificationEmailSuccess(orderEmailDTO.CommandeId(), orderEmailDTO.RecievedAT(), orderEmailDTO.TotalAmount(),orderEmailDTO.Orderstatus() );
+    }
+
+
+
+// in case of  unavailability of items
+
+
 
 
 }
