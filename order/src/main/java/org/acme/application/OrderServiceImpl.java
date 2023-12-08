@@ -3,7 +3,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.UUID;
+
+import org.acme.Api.dto.OrderDeliveryDto;
 import org.acme.Api.dto.RequestFromPayementDTO;
+import org.acme.DDD.DeliveryService;
 import org.acme.DDD.EmailingService;
 import org.acme.DDD.PayementService;
 import org.acme.DDD.PricingService;
@@ -14,6 +17,7 @@ import org.acme.domain.OrderId;
 import org.acme.domain.OrderRepository;
 import org.acme.domain.PayementNotification;
 import org.acme.domain.Products;
+import org.acme.domain.model.ClientAddress;
 import org.acme.domain.model.DeliveryNotification;
 import org.acme.domain.model.PricingNotification;
 import org.acme.domain.model.StockNotification;
@@ -39,6 +43,10 @@ public class OrderServiceImpl implements  OrderService {
 
 	@Inject
 	PricingService Pricingservice;
+
+	@Inject
+	DeliveryService DeliveryService;
+
 
    
 
@@ -163,6 +171,24 @@ public void createOrder(OrderId orderId, Products products, Client clientInfo, B
 		// TODO Auto-generated method stub
 		emailingservice.sendSuccessMail(commandeId, totalAmount, recievedAT, orderstatus);
 	}
+
+
+
+
+
+
+	@Override
+	public void StartDelivery(OrderId orderId, Products products, BigDecimal tatalAmount, ClientAddress clientAddress) {
+		// TODO Auto-generated method stub
+		DeliveryService.StartDelivery(orderId, products, tatalAmount, clientAddress);
+	}
+
+
+
+
+
+
+	
 
 	
     

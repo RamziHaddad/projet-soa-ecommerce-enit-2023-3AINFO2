@@ -8,11 +8,13 @@ import org.acme.Api.dto.OrderEmailDTO;
 import org.acme.Api.dto.OrderPayementDTO;
 import org.acme.Api.dto.OrderStockDTO;
 import org.acme.Api.dto.CreateOrderDto;
+import org.acme.Api.dto.OrderDeliveryDto;
 import org.acme.Api.dto.RequestFromPayementDTO;
 import org.acme.domain.Client;
 import org.acme.domain.Order;
 import org.acme.domain.OrderId;
 import org.acme.domain.Products;
+import org.acme.domain.model.ClientAddress;
 
 public interface OrderService {
 
@@ -33,6 +35,7 @@ public interface OrderService {
 			boolean orderstatus);
 	void sendNotificationEmailSuccess(OrderId commandeId, LocalDateTime recievedAT, BigDecimal totalAmount,
 			boolean orderstatus);
+    void StartDelivery(OrderId orderId, Products products, BigDecimal tatalAmount, ClientAddress clientAddress);
    
 
 }

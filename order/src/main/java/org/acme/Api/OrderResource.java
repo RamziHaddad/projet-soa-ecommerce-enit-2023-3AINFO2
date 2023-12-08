@@ -1,7 +1,11 @@
 package org.acme.Api;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
+
+import java.math.BigDecimal;
+
 import org.acme.Api.dto.CreateOrderDto;
+import org.acme.Api.dto.OrderDeliveryDto;
 import org.acme.Api.dto.OrderEmailDTO;
 import org.acme.Api.dto.OrderPayementDTO;
 import org.acme.Api.dto.OrderPrincingDTO;
@@ -33,7 +37,7 @@ public class OrderResource {
     // check stock
     @POST
     @Transactional
-    @Path("/create-order")
+    @Path("/check-store")
     public void checkStock(OrderStockDTO OrderStockDTO )
     {
         orderService.checkStock( OrderStockDTO.orderid(),OrderStockDTO.products());
@@ -100,11 +104,10 @@ public class OrderResource {
     @POST
     @Transactional
     @Path("/Start-Delivery")
-    public void StartDelivery(OrderEmailDTO orderEmailDTO)
+    public void StartDelivery(OrderDeliveryDto OrderDeliveryDto)
     {
-        orderService.sendNotificationEmailSuccess(orderEmailDTO.CommandeId(), orderEmailDTO.RecievedAT(), orderEmailDTO.TotalAmount(),orderEmailDTO.Orderstatus() );
-    }
-
+        orderService.StartDelivery(OrderDeliveryDto.orderId(), OrderDeliveryDto.products(), OrderDeliveryDto.tatalAmount(),OrderDeliveryDto.clientAddress());
+    }      
 
 
 // in case of  unavailability of items
