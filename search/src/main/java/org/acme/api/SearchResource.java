@@ -10,7 +10,6 @@ import org.acme.application.services.SearchService;
 import org.acme.domain.Product;
 import org.acme.domain.ProductId;
 import org.apache.solr.client.solrj.SolrServerException;
-
 import jakarta.inject.Inject;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
