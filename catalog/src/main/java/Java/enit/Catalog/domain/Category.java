@@ -1,5 +1,4 @@
 package Java.enit.Catalog.domain;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,14 +18,11 @@ import lombok.Setter;
 @Builder
 @Entity
 @Table(name="categories")
-public class Catalog {
+public class Category {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="category_id")
-      private Long id;
-	
+    private Long id;
 	private String name;
 	private String description;
-	
-
 }

@@ -1,6 +1,5 @@
 package org.acme.domain;
 
-import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 

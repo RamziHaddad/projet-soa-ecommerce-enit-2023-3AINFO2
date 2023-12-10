@@ -11,7 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CatalogResponse {
+public class CategoryResponse {
        @Id
 	   private Long id;
 		private String name;

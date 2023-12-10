@@ -7,30 +7,28 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import Java.enit.Catalog.domain.Catalog;
-import Java.enit.Catalog.dto.CatalogRequest;
-import Java.enit.Catalog.dto.CatalogResponse;
-import Java.enit.Catalog.infrastructure.CatalogRepository;
+import Java.enit.Catalog.domain.Category;
+import Java.enit.Catalog.dto.CategoryRequest;
+import Java.enit.Catalog.dto.CategoryResponse;
+import Java.enit.Catalog.infrastructure.CategoryRepository;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 @Service
 @AllArgsConstructor
 
-public class CatalogService {
-	 private final CatalogRepository catalogRepository;
+public class CategoryService {
+	 private final CategoryRepository catalogRepository;
 	 
-	    public Catalog createCatalog(CatalogRequest catalogRequest) {
-	    	Catalog catalog=Catalog.builder()
+	    public Category createCatalog(CategoryRequest catalogRequest) {
+	    	Category catalog=Category.builder()
 	    			        .name(catalogRequest.getName())
 	    			        .description(catalogRequest.getDescription())
 	    			        .build();
 	    	return catalogRepository.save(catalog);
 	    }
 
-	    public List<CatalogResponse> getAllCatalogs() {
-	        List<Catalog>catalogs= catalogRepository.findAll();
+	    public List<CategoryResponse> getAllCatalogs() {
+	        List<Category>catalogs= catalogRepository.findAll();
 	        return catalogs.stream().map(this::maptoCatalogResponse).toList();    
 	        }
 	    /**
@@ -40,18 +38,18 @@ public class CatalogService {
 	     * @return the list of Catalog.
 	     */
             
-	    public Page<CatalogResponse> findAll(Pageable pageable) {
+	    public Page<CategoryResponse> findAll(Pageable pageable) {
 	        return catalogRepository.findAll(pageable).map(this::maptoCatalogResponse);
 	    }
-	    public Optional<Catalog> getCatalogById(Long id) {
+	    public Optional<Category> getCatalogById(Long id) {
 	        return catalogRepository.findById(id);
 	    }
 
 	    
-	    public Catalog updateCatalog(Long id, Catalog updatedCatalog) {
-	        Optional<Catalog> existingCatalog = catalogRepository.findById(id);
+	    public Category updateCatalog(Long id, Category updatedCatalog) {
+	        Optional<Category> existingCatalog = catalogRepository.findById(id);
 	        if (existingCatalog.isPresent()) {
-	            Catalog catalog = existingCatalog.get();
+	            Category catalog = existingCatalog.get();
 	            catalog.setName(updatedCatalog.getName());
 	            catalog.setDescription(updatedCatalog.getDescription());
 	            return catalogRepository.save(catalog);
@@ -65,8 +63,8 @@ public class CatalogService {
 	    }
 	    
 	    
-      private CatalogResponse maptoCatalogResponse(Catalog catalog ) {
-    	  return CatalogResponse.builder()
+      private CategoryResponse maptoCatalogResponse(Category catalog ) {
+    	  return CategoryResponse.builder()
     			  .id(catalog.getId())
     			  .name(catalog.getName())
     			  .description(catalog.getDescription())

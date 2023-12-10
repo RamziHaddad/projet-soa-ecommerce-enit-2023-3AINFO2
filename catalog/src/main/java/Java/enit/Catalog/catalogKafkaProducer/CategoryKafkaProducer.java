@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
-public class CatalogKafkaProducer {
+public class CategoryKafkaProducer {
  
 	private final KafkaTemplate<String, String> Template;
 	private final String topic = "catalog_topic"; 

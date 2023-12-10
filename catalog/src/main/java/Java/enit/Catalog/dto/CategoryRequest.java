@@ -1,6 +1,5 @@
 package Java.enit.Catalog.dto;
 
-import Java.enit.Catalog.domain.Catalog;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,7 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CatalogRequest {
+public class CategoryRequest {
 	private String name;
 	private String description;
 }

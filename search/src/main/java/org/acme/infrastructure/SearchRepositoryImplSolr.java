@@ -53,7 +53,6 @@ public class SearchRepositoryImplSolr implements SearchRepository{
 
     @Override
     public Product findProductById(ProductId productId) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'findProductById'");
     }
 
