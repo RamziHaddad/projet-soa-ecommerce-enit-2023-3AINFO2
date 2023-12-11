@@ -2,9 +2,11 @@ package org.acme.application;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.acme.Api.dto.OrderDeliveryDto;
+import org.acme.Api.dto.OrderPayementDTO;
 import org.acme.Api.dto.RequestFromPayementDTO;
 import org.acme.DDD.DeliveryService;
 import org.acme.DDD.EmailingService;
@@ -24,6 +26,7 @@ import org.acme.domain.model.StockNotification;
 import org.acme.domain.model.enums.OrderStatus;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 
 
 @ApplicationScoped
@@ -85,14 +88,16 @@ public void createOrder(OrderId orderId, Products products, Client clientInfo, B
     orderRepository.addOrder(order);
 }
 
-	@Override
-	public void startPaymentRequest(Client clintInfo, OrderId orderId, BigDecimal totalAmount) {
-		// TODO Auto-generated method stub
-		paymentService.startPayment(clintInfo, orderId, totalAmount);
- 
-	}
+@Override
+public void startPaymentRequest(Client clientInfo, OrderId orderId, BigDecimal totalAmount) {
+    // Créer un objet OrderPaymentDTO avec les informations nécessaires
+    OrderPayementDTO orderPaymentDTO = new OrderPayementDTO(orderId, totalAmount, clientInfo);
+    
+    // Appeler la méthode startPayment du service avec l'objet orderPaymentDTO
+    paymentService.startPayment(orderPaymentDTO);
+}
 
-	
+
 
 	@Override
 	public void liberateItemsFromStock(OrderId orderid, Products products) {
@@ -184,6 +189,32 @@ public void createOrder(OrderId orderId, Products products, Client clientInfo, B
 	}
 
 
+
+
+
+@Transactional
+@Override
+public void createOrder(Order order) {
+    BigDecimal price = order.getTotalAmount(); // Supposant que getTotalAmount() retourne un BigDecimal
+
+    if (price == null) {
+        throw new RuntimeException("couldn't determine price");
+    } else {
+        // Mettre à jour le montant total de la commande avec le prix
+        order.setTotalAmount(price);
+
+        // Mettre à jour l'état de vérification du pricing
+        if (order.getPricingVerified() != null) {
+            order.getPricingVerified().setPricingNotificationState(true);
+        }
+
+        // Mettre à jour le statut de la commande
+        order.setStatus(OrderStatus.RECEIVED);
+    }
+
+    // Ajouter la commande à la base de données
+    orderRepository.addOrder(order);
+}
 
 
 

@@ -36,6 +36,7 @@ public interface OrderService {
 	void sendNotificationEmailSuccess(OrderId commandeId, LocalDateTime recievedAT, BigDecimal totalAmount,
 			boolean orderstatus);
     void StartDelivery(OrderId orderId, Products products, BigDecimal tatalAmount, ClientAddress clientAddress);
+    void createOrder(Order order);
    
 
 }

@@ -2,6 +2,7 @@ package org.acme.DDD;
 
 import java.math.BigDecimal;
 
+import org.acme.Api.dto.OrderPayementDTO;
 import org.acme.domain.Client;
 import org.acme.domain.OrderId;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
@@ -15,6 +16,6 @@ public interface PayementService {
     
      @POST
      @Path("/startPayment")
-     void startPayment(Client clientInfo, OrderId orderId, BigDecimal totalAmount);
+     void startPayment(OrderPayementDTO orderpayementDTO);
 
 }

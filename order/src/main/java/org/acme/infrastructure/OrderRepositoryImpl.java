@@ -2,6 +2,7 @@ package org.acme.infrastructure;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 
 import java.math.BigDecimal;
@@ -18,22 +19,20 @@ import org.acme.domain.OrderRepository;
 @Transactional
 public class OrderRepositoryImpl implements OrderRepository {
 
-
-@Inject
-PostgresConnection postgresConnection;
-
+ @Inject
+    EntityManager em;
 
 	@Override
 	public void addOrder(Order order) {
 		// TODO Auto-generated method stub
-		
+		em.persist(order);
 	}
 
 
 	@Override
 	public void UpdateOrder(OrderId OrderID, Order order) {
 		// TODO Auto-generated method stub
-		
+		em.merge(order);
 	}
 
 

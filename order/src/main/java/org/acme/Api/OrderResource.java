@@ -3,6 +3,8 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 
 import java.math.BigDecimal;
+import java.util.Map;
+import java.util.UUID;
 
 import org.acme.Api.dto.CreateOrderDto;
 import org.acme.Api.dto.OrderDeliveryDto;
@@ -11,12 +13,14 @@ import org.acme.Api.dto.OrderPayementDTO;
 import org.acme.Api.dto.OrderPrincingDTO;
 import org.acme.Api.dto.OrderStockDTO;
 import org.acme.application.OrderService;
+import org.acme.domain.Order;
 import org.acme.domain.OrderId;
+import org.acme.domain.Products;
 
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
-@Path("/order")
+@Path("/orders")
 public class OrderResource {
     
 
@@ -30,7 +34,20 @@ public class OrderResource {
     @Path("/create-order")
     public void createOrder(CreateOrderDto createOrderDto )
     {
-        orderService.createOrder(createOrderDto.orderId(), createOrderDto.products(),createOrderDto.clientInfo(),createOrderDto.tatalAmount() );
+        Order order = new Order(createOrderDto.orderId(), createOrderDto.products(),createOrderDto.clientInfo(),createOrderDto.tatalAmount());
+      
+      
+       for (Map.Entry<UUID, Integer> entry : createOrderDto.products().getProductMap().entrySet()) {
+        UUID productId = entry.getKey();
+        Integer quantity = entry.getValue();
+
+        // Appeler la méthode addItems pour chaque item
+        order.addItem(productId, quantity);
+    }
+
+
+        orderService.createOrder(order);
+       
     }
 
     // Step 2

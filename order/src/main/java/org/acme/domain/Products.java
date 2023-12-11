@@ -8,4 +8,8 @@ public record Products(Map<UUID, Integer> productMap) {
     public Products(Map.Entry<UUID, Integer> entry) {
         this(Map.of(entry.getKey(), entry.getValue()));
     }
+
+    public Map<UUID, Integer> getProductMap() {
+        return productMap;
+    }
 }

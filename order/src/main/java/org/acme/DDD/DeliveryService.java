@@ -9,11 +9,11 @@ import org.acme.domain.model.ClientAddress;
 
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
-
+@Path("/Start-Delivery")
 public interface DeliveryService {
+   
     @POST
-    @Path("/Start-Delivery")
-    void StartDelivery(OrderId orderId, Products products ,BigDecimal tatalAmount, ClientAddress clientAddress);
+   public void StartDelivery(OrderId orderId, Products products ,BigDecimal tatalAmount, ClientAddress clientAddress); // corriger dto
 
 
 }
