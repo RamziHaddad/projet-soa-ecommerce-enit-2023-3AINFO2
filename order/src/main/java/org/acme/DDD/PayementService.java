@@ -11,7 +11,7 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 
 
-@RegisterRestClient(configKey = "payment-service")
+@RegisterRestClient(configKey = "payment-api")
 public interface PayementService {
     
      @POST

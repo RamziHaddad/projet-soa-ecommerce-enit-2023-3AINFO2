@@ -2,6 +2,7 @@ package org.acme.application;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,6 +25,8 @@ import org.acme.domain.model.DeliveryNotification;
 import org.acme.domain.model.PricingNotification;
 import org.acme.domain.model.StockNotification;
 import org.acme.domain.model.enums.OrderStatus;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -33,21 +36,26 @@ import jakarta.transaction.Transactional;
 public class OrderServiceImpl implements  OrderService {
 
     @Inject
-   OrderRepository orderRepository;
+    OrderRepository orderRepository;
 
 	@Inject
+	@RestClient
     PayementService paymentService;
 
 	@Inject
+	@RestClient
     EmailingService emailingservice;
 
 	@Inject
+	@RestClient
     StockService envontoryservice;;
 
 	@Inject
+	@RestClient
 	PricingService Pricingservice;
 
 	@Inject
+	@RestClient
 	DeliveryService DeliveryService;
 
 
@@ -214,6 +222,29 @@ public void createOrder(Order order) {
 
     // Ajouter la commande à la base de données
     orderRepository.addOrder(order);
+}
+
+
+
+
+
+@Transactional
+@Override
+public List<Order> getAllOrdersByClient(UUID idClient) {
+	// TODO Auto-generated method stub
+	
+     return orderRepository.GetAllOrdersByClient(idClient);
+}
+
+
+
+
+
+@Transactional
+@Override
+public Optional<Order> getOrderById(UUID idOrder) {
+	// TODO Auto-generated method stub
+	return orderRepository.queryOrderById(idOrder);
 }
 
 

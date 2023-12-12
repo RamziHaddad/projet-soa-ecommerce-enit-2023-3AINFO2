@@ -6,6 +6,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.acme.domain.Client;
 import org.acme.domain.Order;
@@ -19,7 +21,7 @@ import org.acme.domain.OrderRepository;
 @Transactional
 public class OrderRepositoryImpl implements OrderRepository {
 
- @Inject
+    @Inject
     EntityManager em;
 
 	@Override
@@ -47,6 +49,23 @@ public class OrderRepositoryImpl implements OrderRepository {
 	public void DeleteOrder(OrderId Orderid) {
 		// TODO Auto-generated method stub
 		
+	}
+
+
+	@Override
+	public List<Order> GetAllOrdersByClient(UUID idClient) {
+		// TODO Auto-generated method stub
+		return em.createQuery("SELECT o FROM Order o WHERE o.clientInfo.id = :clientId ORDER BY o.receivedAt", Order.class)
+            .setParameter("clientId", idClient)
+            .getResultList();
+		}
+
+
+	@Override
+	public Optional<Order> queryOrderById(UUID idOrder) {
+		// TODO Auto-generated method stub
+		Order o = em.find(Order.class,idOrder);
+        return Optional.ofNullable(o);
 	}
 
 

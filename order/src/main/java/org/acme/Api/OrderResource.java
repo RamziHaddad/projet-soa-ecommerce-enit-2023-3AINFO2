@@ -1,9 +1,14 @@
 package org.acme.Api;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.core.Response;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.acme.Api.dto.CreateOrderDto;
@@ -12,6 +17,7 @@ import org.acme.Api.dto.OrderEmailDTO;
 import org.acme.Api.dto.OrderPayementDTO;
 import org.acme.Api.dto.OrderPrincingDTO;
 import org.acme.Api.dto.OrderStockDTO;
+import org.acme.Api.dto.OrderViewDTO;
 import org.acme.application.OrderService;
 import org.acme.domain.Order;
 import org.acme.domain.OrderId;
@@ -27,6 +33,34 @@ public class OrderResource {
     @Inject
     OrderService orderService;
 
+
+
+ // methode to return all orders d'un client
+    @GET
+    @Path("/ordersByClient/{id}")
+    public List<OrderViewDTO> allOrderByClient(@PathParam("id") UUID idClient){
+        List<Order> orders = orderService.getAllOrdersByClient(idClient);
+        return orders.stream().map(OrderViewDTO::new).toList();
+    }
+
+
+    @GET
+    @Path("/orderByid/{id}")
+    public Response orderByid(@PathParam("id") UUID idOrder) {
+    Optional<Order> optionalOrder = orderService.getOrderById(idOrder);
+
+    if (optionalOrder.isPresent()) {
+        OrderViewDTO orderViewDTO = new OrderViewDTO(optionalOrder.get());
+        return Response.status(Response.Status.OK).entity(orderViewDTO).build();
+    } else {
+        return Response.status(Response.Status.NOT_FOUND).entity("Order not found for ID: " + idOrder).build();
+    }
+}
+
+
+//  orchestration using SAGA pattern 
+
+
     // Step 1
     // create order 
     @POST
@@ -35,19 +69,13 @@ public class OrderResource {
     public void createOrder(CreateOrderDto createOrderDto )
     {
         Order order = new Order(createOrderDto.orderId(), createOrderDto.products(),createOrderDto.clientInfo(),createOrderDto.tatalAmount());
-      
-      
        for (Map.Entry<UUID, Integer> entry : createOrderDto.products().getProductMap().entrySet()) {
         UUID productId = entry.getKey();
         Integer quantity = entry.getValue();
-
         // Appeler la méthode addItems pour chaque item
         order.addItem(productId, quantity);
     }
-
-
-        orderService.createOrder(order);
-       
+        orderService.createOrder(order); 
     }
 
     // Step 2

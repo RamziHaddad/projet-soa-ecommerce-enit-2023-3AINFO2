@@ -4,9 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import jakarta.ejb.Singleton;
 
-@Singleton
 public class PostgresConnection {
 
     private static final String JDBC_URL = "jdbc:postgresql://localhost:5432/db_order";

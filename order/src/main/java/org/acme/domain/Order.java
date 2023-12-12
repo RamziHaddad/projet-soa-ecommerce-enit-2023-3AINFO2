@@ -37,6 +37,9 @@ public class Order {
 
     private BigDecimal totalAmount = BigDecimal.ZERO;
 
+
+
+
     // Ordre attributes control
     @Enumerated(EnumType.STRING)
     private OrderStatus commandState;
@@ -46,41 +49,82 @@ public class Order {
     private PricingNotification pricingVerified; // pricing microservice control
     private StockNotification stockVerified; // stock microservice control
 
+    public OrderId getCommandeId() {
+        return commandeId;
+    }
+
+    // Setter pour commandeId
+    public void setCommandeId(OrderId commandeId) {
+        this.commandeId = commandeId;
+    }
+
+    // Getter pour products
+    public Products getProducts() {
+        return products;
+    }
+
+    // Setter pour products
+    public void setProducts(Products products) {
+        this.products = products;
+    }
+
+    // Getter pour receivedAt
+    public LocalDateTime getReceivedAt() {
+        return receivedAt;
+    }
+
+    // Setter pour receivedAt
+    public void setReceivedAt(LocalDateTime receivedAt) {
+        this.receivedAt = receivedAt;
+    }
+
+    // Getter pour totalAmount
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
+    }
+
+    // Setter pour totalAmount
+    public void setTotalAmount(BigDecimal totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+
+
 // Getter et Setter pour paymentVerified
-public PayementNotification getPaymentVerified() {
-    return paymentVerified;
-}
+    public PayementNotification getPaymentVerified() {
+        return paymentVerified;
+    }
 
-public void setPaymentVerified(PayementNotification paymentVerified) {
-    this.paymentVerified = paymentVerified;
-}
+    public void setPaymentVerified(PayementNotification paymentVerified) {
+        this.paymentVerified = paymentVerified;
+    }
 
-// Getter et Setter pour deliveryVerified
-public DeliveryNotification getDeliveryVerified() {
-    return deliveryVerified;
-}
+    // Getter et Setter pour deliveryVerified
+    public DeliveryNotification getDeliveryVerified() {
+        return deliveryVerified;
+    }
 
-public void setDeliveryVerified(DeliveryNotification deliveryVerified) {
-    this.deliveryVerified = deliveryVerified;
-}
+    public void setDeliveryVerified(DeliveryNotification deliveryVerified) {
+        this.deliveryVerified = deliveryVerified;
+    }
 
-// Getter et Setter pour pricingVerified
-public PricingNotification getPricingVerified() {
-    return pricingVerified;
-}
+    // Getter et Setter pour pricingVerified
+    public PricingNotification getPricingVerified() {
+        return pricingVerified;
+    }
 
-public void setPricingVerified(PricingNotification pricingVerified) {
-    this.pricingVerified = pricingVerified;
-}
+    public void setPricingVerified(PricingNotification pricingVerified) {
+        this.pricingVerified = pricingVerified;
+    }
 
-// Getter et Setter pour stockVerified
-public StockNotification getStockVerified() {
-    return stockVerified;
-}
+    // Getter et Setter pour stockVerified
+    public StockNotification getStockVerified() {
+        return stockVerified;
+    }
 
-public void setStockVerified(StockNotification stockVerified) {
-    this.stockVerified = stockVerified;
-}
+    public void setStockVerified(StockNotification stockVerified) {
+        this.stockVerified = stockVerified;
+    }
 
 
 

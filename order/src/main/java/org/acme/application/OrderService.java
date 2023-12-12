@@ -2,6 +2,7 @@ package org.acme.application;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import org.acme.Api.dto.OrderEmailDTO;
@@ -37,6 +38,8 @@ public interface OrderService {
 			boolean orderstatus);
     void StartDelivery(OrderId orderId, Products products, BigDecimal tatalAmount, ClientAddress clientAddress);
     void createOrder(Order order);
+    
+    List<Order> getAllOrdersByClient(UUID idClient);
    
 
 }
