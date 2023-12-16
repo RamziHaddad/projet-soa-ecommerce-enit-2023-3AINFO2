@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class PayementNotification {
-    
+
     private Boolean PayementNotificationState;
 
     public Boolean getPayementNotificationState() {
@@ -15,5 +15,4 @@ public class PayementNotification {
         this.PayementNotificationState = payementNotificationState;
     }
 
-    
 }

@@ -7,11 +7,10 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 
 @Path("/Start-Delivery")
-@RegisterRestClient(configKey="shipping-api")
+@RegisterRestClient(configKey = "shipping-api")
 public interface DeliveryService {
-   
-    @POST
-   public void StartDelivery(OrderDeliveryDto OrderDeliveryDto); 
 
+    @POST
+    public void StartDelivery(OrderDeliveryDto OrderDeliveryDto);
 
 }

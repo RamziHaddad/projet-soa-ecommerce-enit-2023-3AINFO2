@@ -3,7 +3,7 @@ package org.acme.domain;
 import java.util.UUID;
 
 public record OrderId(UUID id) {
-    public OrderId(){
+    public OrderId() {
         this(UUID.randomUUID());
     }
 
@@ -11,6 +11,4 @@ public record OrderId(UUID id) {
         this.id = id;
     }
 
-    
-    
 }

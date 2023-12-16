@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-
 public class PostgresConnection {
 
     private static final String JDBC_URL = "jdbc:postgresql://localhost:5432/db_order";
@@ -21,14 +20,17 @@ public class PostgresConnection {
             this.connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD);
             System.out.println("Connected to the database.");
         } catch (ClassNotFoundException | SQLException e) {
-            // It's generally not a good practice to print the exception stack trace in production code.
-            // Logging or handling the exception in a way that makes sense for your application is preferred.
+            // It's generally not a good practice to print the exception stack trace in
+            // production code.
+            // Logging or handling the exception in a way that makes sense for your
+            // application is preferred.
             e.printStackTrace();
             throw new RuntimeException("Failed to connect to the database.");
         }
     }
 
-    // It's a good practice to close the database connection when it's no longer needed.
+    // It's a good practice to close the database connection when it's no longer
+    // needed.
     public void closeConnection() {
         try {
             if (this.connection != null && !this.connection.isClosed()) {
@@ -36,7 +38,8 @@ public class PostgresConnection {
                 System.out.println("Database connection closed.");
             }
         } catch (SQLException e) {
-            // Consider logging the exception or handling it in a way that makes sense for your application.
+            // Consider logging the exception or handling it in a way that makes sense for
+            // your application.
             e.printStackTrace();
         }
     }
