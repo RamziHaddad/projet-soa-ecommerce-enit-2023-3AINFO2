@@ -1,10 +1,9 @@
 package org.acme.Api.dto;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
-import org.acme.domain.Client;
-import org.acme.domain.OrderId;
 
-public record OrderPayementDTO(OrderId OrderId, BigDecimal TotalAmount, Client clintInfo) {
+public record OrderPayementDTO(UUID OrderId, BigDecimal TotalAmount, Long secretCode, Long cartNumber) {
     
 }

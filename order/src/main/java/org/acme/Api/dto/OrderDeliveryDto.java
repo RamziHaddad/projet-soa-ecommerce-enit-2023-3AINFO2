@@ -1,12 +1,9 @@
 package org.acme.Api.dto;
 
 import java.math.BigDecimal;
+import java.util.Map;
+import java.util.UUID;
 
-
-import org.acme.domain.OrderId;
-import org.acme.domain.Products;
-import org.acme.domain.model.ClientAddress;
-
-public record OrderDeliveryDto(OrderId orderId, Products products ,BigDecimal tatalAmount, ClientAddress clientAddress) {
+public record OrderDeliveryDto(UUID orderId, Map<UUID, Integer> productMap ,BigDecimal tatalAmount, String ville, String codePostal, String rue) {
     
 }

@@ -1,10 +1,7 @@
 package org.acme.DDD;
 
-import java.math.BigDecimal;
 
 import org.acme.Api.dto.OrderPayementDTO;
-import org.acme.domain.Client;
-import org.acme.domain.OrderId;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 import jakarta.ws.rs.POST;
@@ -19,3 +16,11 @@ public interface PayementService {
      void startPayment(OrderPayementDTO orderpayementDTO);
 
 }
+
+
+
+
+
+
+
+

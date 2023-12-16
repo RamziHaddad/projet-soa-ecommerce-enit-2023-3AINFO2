@@ -4,8 +4,6 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.Response;
-
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -15,13 +13,11 @@ import org.acme.Api.dto.CreateOrderDto;
 import org.acme.Api.dto.OrderDeliveryDto;
 import org.acme.Api.dto.OrderEmailDTO;
 import org.acme.Api.dto.OrderPayementDTO;
-import org.acme.Api.dto.OrderPrincingDTO;
 import org.acme.Api.dto.OrderStockDTO;
 import org.acme.Api.dto.OrderViewDTO;
 import org.acme.application.OrderService;
 import org.acme.domain.Order;
-import org.acme.domain.OrderId;
-import org.acme.domain.Products;
+
 
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -78,6 +74,7 @@ public class OrderResource {
         orderService.createOrder(order); 
     }
 
+    
     // Step 2
     // check stock
     @POST
@@ -85,7 +82,7 @@ public class OrderResource {
     @Path("/check-store")
     public void checkStock(OrderStockDTO OrderStockDTO )
     {
-        orderService.checkStock( OrderStockDTO.orderid(),OrderStockDTO.products());
+        orderService.checkStock( OrderStockDTO.orderId(),OrderStockDTO.productMap());
     }
 
 
@@ -93,14 +90,17 @@ public class OrderResource {
 
     // Step 3
     // check pricing
-    
-     @POST
+   
+    /* 
+    @POST
     @Transactional
     @Path("/Check-pricing")
     public void Checkpricing(OrderPrincingDTO OrderPrincingDTO)
     {
-        orderService.checkPricing(OrderPrincingDTO.orderid(), OrderPrincingDTO.products());
+        orderService.checkPricing(OrderPrincingDTO.orderid().id(), OrderPrincingDTO.products().getProductMap());
     }
+*/
+
 
     // Step 4
     // start payment process
@@ -109,7 +109,7 @@ public class OrderResource {
     @Path("/Start-payement")
     public void requestPayment(OrderPayementDTO orderPaymentInfo)
     {
-        orderService.startPaymentRequest(orderPaymentInfo.clintInfo(),orderPaymentInfo.OrderId(), orderPaymentInfo.TotalAmount() );
+        orderService.startPaymentRequest(orderPaymentInfo.cartNumber(),orderPaymentInfo.secretCode(),orderPaymentInfo.OrderId(), orderPaymentInfo.TotalAmount() );
     }
       
     
@@ -131,7 +131,7 @@ public class OrderResource {
     @Path("/NotificationStock-LiberateItems")
     public void liberateItemsFromStock(OrderStockDTO orderStockDTO)
     {
-        orderService.liberateItemsFromStock(orderStockDTO.orderid(),orderStockDTO.products());
+        orderService.liberateItemsFromStock(orderStockDTO.orderId(),orderStockDTO.productMap());
     }
 
     // In case of successful payment 
@@ -151,7 +151,7 @@ public class OrderResource {
     @Path("/Start-Delivery")
     public void StartDelivery(OrderDeliveryDto OrderDeliveryDto)
     {
-        orderService.StartDelivery(OrderDeliveryDto.orderId(), OrderDeliveryDto.products(), OrderDeliveryDto.tatalAmount(),OrderDeliveryDto.clientAddress());
+        orderService.StartDelivery(OrderDeliveryDto.orderId(), OrderDeliveryDto.productMap(), OrderDeliveryDto.tatalAmount(),OrderDeliveryDto.codePostal(),OrderDeliveryDto.rue(), OrderDeliveryDto.ville());
     }      
 
 

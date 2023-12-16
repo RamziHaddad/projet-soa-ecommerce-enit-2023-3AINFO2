@@ -3,12 +3,15 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.acme.Api.dto.OrderDeliveryDto;
+import org.acme.Api.dto.OrderEmailDTO;
 import org.acme.Api.dto.OrderPayementDTO;
-import org.acme.Api.dto.RequestFromPayementDTO;
+import org.acme.Api.dto.OrderPrincingDTO;
+import org.acme.Api.dto.OrderStockDTO;
 import org.acme.DDD.DeliveryService;
 import org.acme.DDD.EmailingService;
 import org.acme.DDD.PayementService;
@@ -97,9 +100,9 @@ public void createOrder(OrderId orderId, Products products, Client clientInfo, B
 }
 
 @Override
-public void startPaymentRequest(Client clientInfo, OrderId orderId, BigDecimal totalAmount) {
+public void startPaymentRequest(Long cartNumber, Long secretCode, UUID orderId, BigDecimal totalAmount) {
     // Créer un objet OrderPaymentDTO avec les informations nécessaires
-    OrderPayementDTO orderPaymentDTO = new OrderPayementDTO(orderId, totalAmount, clientInfo);
+    OrderPayementDTO orderPaymentDTO = new OrderPayementDTO(orderId, totalAmount, secretCode, secretCode);
     
     // Appeler la méthode startPayment du service avec l'objet orderPaymentDTO
     paymentService.startPayment(orderPaymentDTO);
@@ -108,9 +111,10 @@ public void startPaymentRequest(Client clientInfo, OrderId orderId, BigDecimal t
 
 
 	@Override
-	public void liberateItemsFromStock(OrderId orderid, Products products) {
+	public void liberateItemsFromStock(UUID orderId, Map<UUID, Integer> productMap) {
 		// TODO Auto-generated method stub
-		envontoryservice.LiberateProducts(orderid, products);
+		OrderStockDTO StockDTO = new OrderStockDTO(orderId, productMap);
+		envontoryservice.LiberateProducts(StockDTO);
 
 
 	}
@@ -139,10 +143,13 @@ public void startPaymentRequest(Client clientInfo, OrderId orderId, BigDecimal t
 
 
 
+	@Transactional
 	@Override
-	public void checkStock(OrderId orderid, Products products) {
+	public void checkStock(UUID orderId, Map<UUID, Integer> productMap) {
 		// TODO Auto-generated method stub
-		envontoryservice.CheckProducts(orderid, products);
+
+		OrderStockDTO StockDTO = new OrderStockDTO(orderId,productMap);
+		envontoryservice.CheckProducts(StockDTO);
 	}
 
 
@@ -151,10 +158,12 @@ public void startPaymentRequest(Client clientInfo, OrderId orderId, BigDecimal t
 
 
 	@Override
-	public void checkPricing(OrderId orderid, Products products) {
+	public BigDecimal checkPricing(UUID orderid, Map<UUID, Integer> productMap) {
 		// TODO Auto-generated method stub
 		
-	     Pricingservice.CheckPricing(orderid, products);	
+        OrderPrincingDTO PricingDTO = new OrderPrincingDTO(orderid, productMap);
+
+	     return Pricingservice.CheckPricing(PricingDTO);	
 	}
 
 
@@ -163,11 +172,12 @@ public void startPaymentRequest(Client clientInfo, OrderId orderId, BigDecimal t
 
 
 	@Override
-	public void sendNotificationEmailFailed(OrderId commandeId, LocalDateTime recievedAT, BigDecimal totalAmount,
+	public void sendNotificationEmailFailed(UUID commandeId, LocalDateTime recievedAT, BigDecimal totalAmount,
 			boolean orderstatus) {
 			orderstatus= false;
+			OrderEmailDTO EmailDTO = new OrderEmailDTO(commandeId, totalAmount, recievedAT, orderstatus);
 		// TODO Auto-generated method stub
-		emailingservice.sendFailedMail(commandeId, totalAmount, recievedAT, orderstatus);
+		emailingservice.sendFailedMail(EmailDTO);
 
 	}
 
@@ -177,12 +187,13 @@ public void startPaymentRequest(Client clientInfo, OrderId orderId, BigDecimal t
 
 
 	@Override
-	public void sendNotificationEmailSuccess(OrderId commandeId, LocalDateTime recievedAT, BigDecimal totalAmount,
+	public void sendNotificationEmailSuccess(UUID commandeId, LocalDateTime recievedAT, BigDecimal totalAmount,
 			boolean orderstatus) {
 		// TODO Auto-generated method stub
 		orderstatus= true;
+		OrderEmailDTO EmailDTO = new OrderEmailDTO(commandeId, totalAmount, recievedAT, orderstatus);
 		// TODO Auto-generated method stub
-		emailingservice.sendSuccessMail(commandeId, totalAmount, recievedAT, orderstatus);
+		emailingservice.sendSuccessMail(EmailDTO);
 	}
 
 
@@ -191,9 +202,12 @@ public void startPaymentRequest(Client clientInfo, OrderId orderId, BigDecimal t
 
 
 	@Override
-	public void StartDelivery(OrderId orderId, Products products, BigDecimal tatalAmount, ClientAddress clientAddress) {
+	public void StartDelivery(UUID orderId, Map<UUID, Integer> productMap, BigDecimal tatalAmount, String codePostal,
+	String rue, String ville) {
+
+		OrderDeliveryDto DeliveryDTO =new OrderDeliveryDto(orderId, productMap, tatalAmount, ville, ville, ville);
 		// TODO Auto-generated method stub
-		DeliveryService.StartDelivery(orderId, products, tatalAmount, clientAddress);
+		DeliveryService.StartDelivery(DeliveryDTO);
 	}
 
 
@@ -203,9 +217,10 @@ public void startPaymentRequest(Client clientInfo, OrderId orderId, BigDecimal t
 @Transactional
 @Override
 public void createOrder(Order order) {
-    BigDecimal price = order.getTotalAmount(); // Supposant que getTotalAmount() retourne un BigDecimal
-
-    if (price == null) {
+    //BigDecimal price = order.getTotalAmount(); // Vérification du microservice pricing
+     BigDecimal price= checkPricing(order.getCommandeId().id(),order.getProducts().getProductMap());
+    
+	 if (price == null) {
         throw new RuntimeException("couldn't determine price");
     } else {
         // Mettre à jour le montant total de la commande avec le prix
