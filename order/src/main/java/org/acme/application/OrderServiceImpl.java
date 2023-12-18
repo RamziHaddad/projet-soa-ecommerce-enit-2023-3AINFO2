@@ -106,6 +106,7 @@ public void startPaymentRequest(Long cartNumber, Long secretCode, UUID orderId, 
     
     // Appeler la méthode startPayment du service avec l'objet orderPaymentDTO
     paymentService.startPayment(orderPaymentDTO);
+
 }
 
 
@@ -145,11 +146,11 @@ public void startPaymentRequest(Long cartNumber, Long secretCode, UUID orderId, 
 
 	@Transactional
 	@Override
-	public void checkStock(UUID orderId, Map<UUID, Integer> productMap) {
+	public boolean checkStock(UUID orderId, Map<UUID, Integer> productMap) {
 		// TODO Auto-generated method stub
 
 		OrderStockDTO StockDTO = new OrderStockDTO(orderId,productMap);
-		envontoryservice.CheckProducts(StockDTO);
+		return envontoryservice.CheckProducts(StockDTO);
 	}
 
 
@@ -202,10 +203,9 @@ public void startPaymentRequest(Long cartNumber, Long secretCode, UUID orderId, 
 
 
 	@Override
-	public void StartDelivery(UUID orderId, Map<UUID, Integer> productMap, BigDecimal tatalAmount, String codePostal,
-	String rue, String ville) {
+	public void StartDelivery(UUID orderId, UUID idClient, String address) {
 
-		OrderDeliveryDto DeliveryDTO =new OrderDeliveryDto(orderId, productMap, tatalAmount, ville, ville, ville);
+		OrderDeliveryDto DeliveryDTO =new OrderDeliveryDto(orderId, idClient, address);
 		// TODO Auto-generated method stub
 		DeliveryService.StartDelivery(DeliveryDTO);
 	}

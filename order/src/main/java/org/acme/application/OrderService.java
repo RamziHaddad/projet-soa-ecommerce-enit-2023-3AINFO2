@@ -26,7 +26,7 @@ public interface OrderService {
    
     void liberateItemsFromStock(UUID orderId, Map<UUID, Integer> productMap);
 
-    void checkStock(UUID orderId, Map<UUID, Integer> productMap);
+    boolean checkStock(UUID orderId, Map<UUID, Integer> productMap);
 
     BigDecimal checkPricing(UUID orderid, Map<UUID, Integer> productMap);
 	void sendNotificationEmailFailed(UUID commandeId, LocalDateTime recievedAT, BigDecimal totalAmount,
@@ -37,8 +37,8 @@ public interface OrderService {
     List<Order> getAllOrdersByClient(UUID idClient);
     Optional<Order> getOrderById(UUID idOrder);
     
-    void StartDelivery(UUID orderId, Map<UUID, Integer> productMap, BigDecimal tatalAmount, String codePostal,
-            String rue, String ville);
+    
+    void StartDelivery(UUID orderId, UUID idClient, String address);
     
 
 }

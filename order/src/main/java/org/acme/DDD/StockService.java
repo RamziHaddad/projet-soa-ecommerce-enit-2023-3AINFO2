@@ -20,6 +20,6 @@ public interface StockService {
       
      @POST
      @Path("/CheckProducts")
-     void CheckProducts( OrderStockDTO OrderStockDTO);
+     Boolean CheckProducts( OrderStockDTO OrderStockDTO);
 
 }

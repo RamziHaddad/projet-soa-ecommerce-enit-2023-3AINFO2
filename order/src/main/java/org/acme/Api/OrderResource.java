@@ -4,6 +4,8 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.Response;
+
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -13,6 +15,7 @@ import org.acme.Api.dto.CreateOrderDto;
 import org.acme.Api.dto.OrderDeliveryDto;
 import org.acme.Api.dto.OrderEmailDTO;
 import org.acme.Api.dto.OrderPayementDTO;
+import org.acme.Api.dto.OrderPrincingDTO;
 import org.acme.Api.dto.OrderStockDTO;
 import org.acme.Api.dto.OrderViewDTO;
 import org.acme.application.OrderService;
@@ -80,9 +83,9 @@ public class OrderResource {
     @POST
     @Transactional
     @Path("/check-store")
-    public void checkStock(OrderStockDTO OrderStockDTO )
-    {
-        orderService.checkStock( OrderStockDTO.orderId(),OrderStockDTO.productMap());
+    public Response checkStock(OrderStockDTO orderStockDTO) {
+        boolean stockAvailable = orderService.checkStock(orderStockDTO.orderId(), orderStockDTO.productMap());
+        return Response.ok().entity(stockAvailable).build();
     }
 
 
@@ -91,15 +94,20 @@ public class OrderResource {
     // Step 3
     // check pricing
    
-    /* 
+    
     @POST
     @Transactional
     @Path("/Check-pricing")
-    public void Checkpricing(OrderPrincingDTO OrderPrincingDTO)
-    {
-        orderService.checkPricing(OrderPrincingDTO.orderid().id(), OrderPrincingDTO.products().getProductMap());
-    }
-*/
+    public Response checkPricing(OrderPrincingDTO orderPrincingDTO) {
+    // Assuming OrderPrincingDTO contains necessary information
+    BigDecimal totalPrice = orderService.checkPricing(orderPrincingDTO.orderId(), 
+                                                     orderPrincingDTO.productMap());
+    
+    // Additional logic based on the pricing check result can be added here
+    
+    return Response.ok().entity("Pricing check successful. Total Price: " + totalPrice).build();
+}
+
 
 
     // Step 4
@@ -149,10 +157,10 @@ public class OrderResource {
     @POST
     @Transactional
     @Path("/Start-Delivery")
-    public void StartDelivery(OrderDeliveryDto OrderDeliveryDto)
-    {
-        orderService.StartDelivery(OrderDeliveryDto.orderId(), OrderDeliveryDto.productMap(), OrderDeliveryDto.tatalAmount(),OrderDeliveryDto.codePostal(),OrderDeliveryDto.rue(), OrderDeliveryDto.ville());
-    }      
+    public void startDelivery(OrderDeliveryDto orderDeliveryDto) {
+        orderService.StartDelivery(orderDeliveryDto.orderId(), orderDeliveryDto.idClient(),
+                orderDeliveryDto.address());
+    }     
 
 
 // in case of  unavailability of items
