@@ -37,9 +37,6 @@ public class Order {
 
     private BigDecimal totalAmount = BigDecimal.ZERO;
 
-
-
-
     // Ordre attributes control
     @Enumerated(EnumType.STRING)
     private OrderStatus commandState;
@@ -88,9 +85,7 @@ public class Order {
         this.totalAmount = totalAmount;
     }
 
-
-
-// Getter et Setter pour paymentVerified
+    // Getter et Setter pour paymentVerified
     public PayementNotification getPaymentVerified() {
         return paymentVerified;
     }
@@ -126,8 +121,6 @@ public class Order {
         this.stockVerified = stockVerified;
     }
 
-
-
     // Customer data-related attributes
     private Client clientInfo;
 
@@ -136,10 +129,10 @@ public class Order {
 
     @JsonCreator
     public static Order of(OrderId commandeId, Products products, LocalDateTime receivedAt,
-                           BigDecimal totalAmount, OrderStatus commandState,
-                           PayementNotification paymentVerified, DeliveryNotification deliveryVerified,
-                           PricingNotification pricingVerified, StockNotification stockVerified,
-                           Client clientInfo) {
+            BigDecimal totalAmount, OrderStatus commandState,
+            PayementNotification paymentVerified, DeliveryNotification deliveryVerified,
+            PricingNotification pricingVerified, StockNotification stockVerified,
+            Client clientInfo) {
         return new Order(commandeId, products, clientInfo, totalAmount);
     }
 
@@ -162,25 +155,23 @@ public class Order {
         this.stockVerified = new StockNotification();
         this.stockVerified.setStockNotificationState(false);
     }
+
     public OrderStatus getStatus() {
         return commandState; // Utilisez la propriété commandState au lieu de la constante OrderStatus
     }
 
-    public void setStatus(OrderStatus os)
-    {
-        commandState=os;
+    public void setStatus(OrderStatus os) {
+        commandState = os;
     }
 
-
-   public void addItem(UUID identifiant, Integer quantite) {
+    public void addItem(UUID identifiant, Integer quantite) {
         if (products == null) {
             products = new Products(Map.of(identifiant, quantite));
         } else {
             products.getProductMap().put(identifiant, quantite);
         }
-        
-    }
 
+    }
 
     public void addItems(Map<UUID, Integer> items) {
         if (products == null) {
@@ -189,7 +180,7 @@ public class Order {
             for (Map.Entry<UUID, Integer> entry : items.entrySet()) {
                 UUID identifiant = entry.getKey();
                 Integer nouvelleQuantite = entry.getValue();
-    
+
                 // Vérifier si l'identifiant existe déjà dans la map des produits
                 if (products.getProductMap().containsKey(identifiant)) {
                     // Si l'identifiant existe déjà, mettez à jour la quantité
@@ -200,8 +191,7 @@ public class Order {
                 }
             }
         }
-       
-    }
 
+    }
 
 }

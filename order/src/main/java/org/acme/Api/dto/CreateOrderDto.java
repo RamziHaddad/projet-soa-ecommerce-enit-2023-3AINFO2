@@ -5,6 +5,5 @@ import org.acme.domain.OrderId;
 import org.acme.domain.Products;
 import java.math.BigDecimal;
 
-
-public record CreateOrderDto(OrderId orderId, Products products ,BigDecimal tatalAmount, Client clientInfo ) {
-} 
+public record CreateOrderDto(OrderId orderId, Products products, BigDecimal tatalAmount, Client clientInfo) {
+}
