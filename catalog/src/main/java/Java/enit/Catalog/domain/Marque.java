@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.List;
 import jakarta.persistence.CascadeType;
-import java.util.List;
 
 @Getter
 @Setter
@@ -31,8 +30,5 @@ public class Marque {
 	private String description;
 
     @OneToMany(mappedBy = "marque", cascade = CascadeType.ALL)
-    private List<Product> products;
-
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private List<Product> products;
 }
