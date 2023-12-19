@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.List;
 import jakarta.persistence.CascadeType;
+import java.util.List;
 
 @Getter
 @Setter
@@ -20,15 +21,18 @@ import jakarta.persistence.CascadeType;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name="categories")
-public class Category {
+@Table(name="marques")
+public class Marque {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="category_id")
+	@Column(name="marque_id")
     private Long id;
 	private String name;
 	private String description;
 
-	@OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "marque", cascade = CascadeType.ALL)
+    private List<Product> products;
+
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private List<Product> products;
 }
