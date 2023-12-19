@@ -31,9 +31,9 @@ public class SearchRepositoryImplSolr implements SearchRepository{
         QueryResponse response = solrConn.search(new SolrQuery("*:*"));
         SolrDocumentList rs = response.getResults();
         for(SolrDocument document:rs){
-            System.out.println();
+            result.add(Product.of(new ProductId(UUID.fromString(document.getFieldValue("id").toString())), new Description(document.getFieldValue("description").toString())));
         }
-        throw new UnsupportedOperationException("Unimplemented method 'findAll'");
+        return result;
     }
 
     @Override
