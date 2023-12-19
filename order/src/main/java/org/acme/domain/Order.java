@@ -124,6 +124,14 @@ public class Order {
     // Customer data-related attributes
     private Client clientInfo;
 
+    public Client getClientInfo() {
+        return clientInfo;
+    }
+
+    public void setClientInfo(Client clientInfo) {
+        this.clientInfo = clientInfo;
+    }
+
     public Order() {
     }
 

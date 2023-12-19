@@ -65,7 +65,7 @@ public class OrderServiceImpl implements OrderService {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+/* 
 	@Override
 	public void createOrder(OrderId orderId, Products products, Client clientInfo, BigDecimal totalAmount) {
 		// Initialiser les objets de notification à false
@@ -88,9 +88,8 @@ public class OrderServiceImpl implements OrderService {
 		// Ajouter la commande au repository
 		orderRepository.addOrder(order);
 	}
-
+*/
 	@Override
-<<<<<<< HEAD
 public void createOrder(OrderId orderId, Products products, Client clientInfo, BigDecimal totalAmount) {
     // Initialiser les objets de notification à false
     PayementNotification paymentNotification = new PayementNotification();
@@ -114,24 +113,15 @@ public void createOrder(OrderId orderId, Products products, Client clientInfo, B
 }
 
 @Override
-public void startPaymentRequest(Long cartNumber, Long secretCode, UUID orderId, BigDecimal totalAmount) {
+public boolean startPaymentRequest(Long cartNumber, Long secretCode, UUID orderId, BigDecimal totalAmount) {
     // Créer un objet OrderPaymentDTO avec les informations nécessaires
     OrderPayementDTO orderPaymentDTO = new OrderPayementDTO(orderId, totalAmount, secretCode, secretCode);
     
     // Appeler la méthode startPayment du service avec l'objet orderPaymentDTO
-    paymentService.startPayment(orderPaymentDTO);
+   return paymentService.startPayment(orderPaymentDTO);
 
 }
 
-=======
-	public void startPaymentRequest(Long cartNumber, Long secretCode, UUID orderId, BigDecimal totalAmount) {
-		// Créer un objet OrderPaymentDTO avec les informations nécessaires
-		OrderPayementDTO orderPaymentDTO = new OrderPayementDTO(orderId, totalAmount, secretCode, secretCode);
->>>>>>> aaaaf3325e74ee5ce77ba37f89a8ba1c14bb0eef
-
-		// Appeler la méthode startPayment du service avec l'objet orderPaymentDTO
-		paymentService.startPayment(orderPaymentDTO);
-	}
 
 	@Override
 	public void liberateItemsFromStock(UUID orderId, Map<UUID, Integer> productMap) {
@@ -158,13 +148,8 @@ public void startPaymentRequest(Long cartNumber, Long secretCode, UUID orderId, 
 	public boolean checkStock(UUID orderId, Map<UUID, Integer> productMap) {
 		// TODO Auto-generated method stub
 
-<<<<<<< HEAD
 		OrderStockDTO StockDTO = new OrderStockDTO(orderId,productMap);
 		return envontoryservice.CheckProducts(StockDTO);
-=======
-		OrderStockDTO StockDTO = new OrderStockDTO(orderId, productMap);
-		envontoryservice.CheckProducts(StockDTO);
->>>>>>> aaaaf3325e74ee5ce77ba37f89a8ba1c14bb0eef
 	}
 
 	@Override
@@ -197,16 +182,9 @@ public void startPaymentRequest(Long cartNumber, Long secretCode, UUID orderId, 
 	}
 
 	@Override
-<<<<<<< HEAD
 	public void StartDelivery(UUID orderId, UUID idClient, String address) {
 
 		OrderDeliveryDto DeliveryDTO =new OrderDeliveryDto(orderId, idClient, address);
-=======
-	public void StartDelivery(UUID orderId, Map<UUID, Integer> productMap, BigDecimal tatalAmount, String codePostal,
-			String rue, String ville) {
-
-		OrderDeliveryDto DeliveryDTO = new OrderDeliveryDto(orderId, productMap, tatalAmount, ville, ville, ville);
->>>>>>> aaaaf3325e74ee5ce77ba37f89a8ba1c14bb0eef
 		// TODO Auto-generated method stub
 		DeliveryService.StartDelivery(DeliveryDTO);
 	}

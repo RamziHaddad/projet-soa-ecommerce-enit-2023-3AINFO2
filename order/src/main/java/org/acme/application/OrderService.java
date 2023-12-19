@@ -21,7 +21,7 @@ public interface OrderService {
 
     void DeleteOrder(OrderId Orderid);
 
-    void startPaymentRequest(Long cartNumber, Long secretCode, UUID orderId, BigDecimal totalAmount);
+    boolean startPaymentRequest(Long cartNumber, Long secretCode, UUID orderId, BigDecimal totalAmount);
 
     void liberateItemsFromStock(UUID orderId, Map<UUID, Integer> productMap);
 
@@ -40,15 +40,9 @@ public interface OrderService {
     List<Order> getAllOrdersByClient(UUID idClient);
 
     Optional<Order> getOrderById(UUID idOrder);
-<<<<<<< HEAD
     
     
     void StartDelivery(UUID orderId, UUID idClient, String address);
     
-=======
-
-    void StartDelivery(UUID orderId, Map<UUID, Integer> productMap, BigDecimal tatalAmount, String codePostal,
-            String rue, String ville);
->>>>>>> aaaaf3325e74ee5ce77ba37f89a8ba1c14bb0eef
 
 }

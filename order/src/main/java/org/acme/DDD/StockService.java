@@ -16,10 +16,6 @@ public interface StockService {
 
      @POST
      @Path("/CheckProducts")
-<<<<<<< HEAD
      Boolean CheckProducts( OrderStockDTO OrderStockDTO);
-=======
-     void CheckProducts(OrderStockDTO OrderStockDTO);
->>>>>>> aaaaf3325e74ee5ce77ba37f89a8ba1c14bb0eef
 
 }

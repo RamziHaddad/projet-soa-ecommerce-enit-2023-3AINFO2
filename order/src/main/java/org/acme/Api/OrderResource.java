@@ -76,21 +76,15 @@ public class OrderResource {
     @POST
     @Transactional
     @Path("/check-store")
-<<<<<<< HEAD
     public Response checkStock(OrderStockDTO orderStockDTO) {
         boolean stockAvailable = orderService.checkStock(orderStockDTO.orderId(), orderStockDTO.productMap());
         return Response.ok().entity(stockAvailable).build();
-=======
-    public void checkStock(OrderStockDTO OrderStockDTO) {
-        orderService.checkStock(OrderStockDTO.orderId(), OrderStockDTO.productMap());
->>>>>>> aaaaf3325e74ee5ce77ba37f89a8ba1c14bb0eef
     }
 
     // in case of availability of items
 
     // Step 3
     // check pricing
-<<<<<<< HEAD
    
     
     @POST
@@ -106,8 +100,6 @@ public class OrderResource {
     return Response.ok().entity("Pricing check successful. Total Price: " + totalPrice).build();
 }
 
-=======
->>>>>>> aaaaf3325e74ee5ce77ba37f89a8ba1c14bb0eef
 
     /*
      * @POST
@@ -127,9 +119,17 @@ public class OrderResource {
     @POST
     @Transactional
     @Path("/Start-payement")
-    public void requestPayment(OrderPayementDTO orderPaymentInfo) {
-        orderService.startPaymentRequest(orderPaymentInfo.cartNumber(), orderPaymentInfo.secretCode(),
-                orderPaymentInfo.OrderId(), orderPaymentInfo.TotalAmount());
+    public Response requestPayment(OrderPayementDTO orderPaymentInfo) {
+        boolean paymentResult = orderService.startPaymentRequest(orderPaymentInfo.cartNumber(),
+                                                                 orderPaymentInfo.secretCode(),
+                                                                 orderPaymentInfo.OrderId(),
+                                                                 orderPaymentInfo.TotalAmount());
+    
+        if (paymentResult) {
+            return Response.ok().entity("Payment request successful.").build();
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Payment request failed.").build();
+        }
     }
 
     // In case of payment failure
@@ -166,7 +166,6 @@ public class OrderResource {
     @POST
     @Transactional
     @Path("/Start-Delivery")
-<<<<<<< HEAD
     public void startDelivery(OrderDeliveryDto orderDeliveryDto) {
         orderService.StartDelivery(orderDeliveryDto.orderId(), orderDeliveryDto.idClient(),
                 orderDeliveryDto.address());
@@ -176,13 +175,6 @@ public class OrderResource {
 // in case of  unavailability of items
 
 
-=======
-    public void StartDelivery(OrderDeliveryDto OrderDeliveryDto) {
-        orderService.StartDelivery(OrderDeliveryDto.orderId(), OrderDeliveryDto.productMap(),
-                OrderDeliveryDto.tatalAmount(), OrderDeliveryDto.codePostal(), OrderDeliveryDto.rue(),
-                OrderDeliveryDto.ville());
-    }
->>>>>>> aaaaf3325e74ee5ce77ba37f89a8ba1c14bb0eef
 
     // in case of unavailability of items
 
