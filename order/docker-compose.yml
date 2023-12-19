@@ -1,7 +1,7 @@
 
 services:
   postgres:
-    container_name: postgres
+    container_name: postgres_test
     image: postgres
     environment:
       POSTGRES_USER: db_order
@@ -16,7 +16,7 @@ services:
       - postgres
     restart: unless-stopped
   pgadmin:
-    container_name: pgadmin
+    container_name: pgadmin_test
     image: dpage/pgadmin4
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
