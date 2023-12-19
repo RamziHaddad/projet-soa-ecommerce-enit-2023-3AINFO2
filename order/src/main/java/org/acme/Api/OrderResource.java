@@ -15,12 +15,16 @@ import java.util.UUID;
 import org.acme.Api.dto.CreateOrderDto;
 import org.acme.Api.dto.OrderDeliveryDto;
 import org.acme.Api.dto.OrderEmailDTO;
+import org.acme.Api.dto.OrderPanierDTO;
 import org.acme.Api.dto.OrderPayementDTO;
 import org.acme.Api.dto.OrderPrincingDTO;
 import org.acme.Api.dto.OrderStockDTO;
 import org.acme.Api.dto.OrderViewDTO;
 import org.acme.application.OrderService;
+import org.acme.domain.Client;
 import org.acme.domain.Order;
+import org.acme.domain.OrderId;
+import org.acme.domain.Products;
 
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -56,20 +60,39 @@ public class OrderResource {
 
     // Step 1
     // create order
-    @POST
-    @Transactional
-    @Path("/create-order")
-    public void createOrder(CreateOrderDto createOrderDto) {
-        Order order = new Order(createOrderDto.orderId(), createOrderDto.products(), createOrderDto.clientInfo(),
-                createOrderDto.tatalAmount());
-        for (Map.Entry<UUID, Integer> entry : createOrderDto.products().getProductMap().entrySet()) {
+ @POST
+@Transactional
+@Path("/create-order")
+public Response createOrder(OrderPanierDTO orderPanierDTO) {
+    try {
+        OrderId orderId = new OrderId(orderPanierDTO.OrderId());
+        Client clientInfo = new Client(
+            orderPanierDTO.ClientId(),
+            orderPanierDTO.secretCode(),
+            orderPanierDTO.cartNumber(),
+            orderPanierDTO.address()
+        );
+        Products products = new Products(orderPanierDTO.items());
+        BigDecimal totalAmount = orderPanierDTO.Totalamount();
+
+        Order order = new Order(orderId, products, clientInfo, totalAmount);
+
+        for (Map.Entry<UUID, Integer> entry : orderPanierDTO.items().entrySet()) {
             UUID productId = entry.getKey();
             Integer quantity = entry.getValue();
-            // Appeler la méthode addItems pour chaque item
             order.addItem(productId, quantity);
         }
+
         orderService.createOrder(order);
+
+        return Response.ok().entity("Order created successfully.").build();
+    } catch (Exception e) {
+        // Gérer les erreurs d'une manière appropriée
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                .entity("Failed to create order. Error: " + e.getMessage()).build();
     }
+}
+
 
     // Step 2
     // check stock
@@ -116,21 +139,21 @@ public class OrderResource {
 
     // Step 4
     // start payment process
-    @POST
-    @Transactional
-    @Path("/Start-payement")
-    public Response requestPayment(OrderPayementDTO orderPaymentInfo) {
-        boolean paymentResult = orderService.startPaymentRequest(orderPaymentInfo.cartNumber(),
-                                                                 orderPaymentInfo.secretCode(),
-                                                                 orderPaymentInfo.OrderId(),
-                                                                 orderPaymentInfo.TotalAmount());
-    
-        if (paymentResult) {
-            return Response.ok().entity("Payment request successful.").build();
-        } else {
-            return Response.status(Response.Status.BAD_REQUEST).entity("Payment request failed.").build();
-        }
+   @POST
+@Transactional
+@Path("/Start-payement")
+public Response requestPayment(OrderPayementDTO orderPaymentInfo) {
+    boolean paymentResult = orderService.startPaymentRequest(orderPaymentInfo.cartNumber(),
+                                                             orderPaymentInfo.secretCode(),
+                                                             orderPaymentInfo.OrderId(),
+                                                             orderPaymentInfo.TotalAmount());
+
+    if (paymentResult) {
+        return Response.ok().entity("Payment request successful.").build();
+    } else {
+        return Response.status(Response.Status.BAD_REQUEST).entity("Payment request failed.").build();
     }
+}
 
     // In case of payment failure
     // send notification mail of failed payment

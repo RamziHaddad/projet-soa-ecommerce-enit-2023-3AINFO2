@@ -1,5 +1,7 @@
 package org.acme.domain;
 
-public record Client(Long userId, Long secretCode, Long cartNumber) {
+import java.util.UUID;
+
+public record Client(UUID userId, Long secretCode, Long cartNumber, String address) {
 
 }
