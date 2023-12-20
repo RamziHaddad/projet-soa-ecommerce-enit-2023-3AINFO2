@@ -17,9 +17,9 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 
 public class CategoryService {
-	 private final CategoryRepository catalogRepository;
+	private final CategoryRepository catalogRepository;
 	 
-	    public Category createCatalog(CategoryRequest catalogRequest) {
+	    public Category createCategory(CategoryRequest catalogRequest) {
 	    	Category catalog=Category.builder()
 	    			        .name(catalogRequest.getName())
 	    			        .description(catalogRequest.getDescription())
@@ -27,7 +27,7 @@ public class CategoryService {
 	    	return catalogRepository.save(catalog);
 	    }
 
-	    public List<CategoryResponse> getAllCatalogs() {
+	    public List<CategoryResponse> getAllCategory() {
 	        List<Category>catalogs= catalogRepository.findAll();
 	        return catalogs.stream().map(this::maptoCatalogResponse).toList();    
 	        }
@@ -41,12 +41,12 @@ public class CategoryService {
 	    public Page<CategoryResponse> findAll(Pageable pageable) {
 	        return catalogRepository.findAll(pageable).map(this::maptoCatalogResponse);
 	    }
-	    public Optional<Category> getCatalogById(Long id) {
+	    public Optional<Category> getCategoryById(Long id) {
 	        return catalogRepository.findById(id);
 	    }
 
 	    
-	    public Category updateCatalog(Long id, Category updatedCatalog) {
+	    public Category updateCategory(Long id, Category updatedCatalog) {
 	        Optional<Category> existingCatalog = catalogRepository.findById(id);
 	        if (existingCatalog.isPresent()) {
 	            Category catalog = existingCatalog.get();
@@ -58,7 +58,7 @@ public class CategoryService {
 	        }
 	    }
 
-	    public void deleteCatalog(Long id) {
+	    public void deleteCategory(Long id) {
 	        catalogRepository.deleteById(id);
 	    }
 	    

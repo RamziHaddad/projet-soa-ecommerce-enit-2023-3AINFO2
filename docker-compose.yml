@@ -1,20 +1,15 @@
 version: '3'
 
 services:
-  postgres:
-    container_name: db_shipping
-    image: postgres
+  db_shipping:
+    image: postgres:15.0
     environment:
+      POSTGRES_DB: db_shipping 
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: azerty
-      PGDATA: /data/postgres
-    volumes:
-      - postgres:/data/postgres
     ports:
-      - "5432:5432"
-    networks:
-      - postgres
-    restart: unless-stopped
+      - 5443:5432
+  
   db_bank:
     image: postgres:15.0
     environment:

@@ -33,13 +33,13 @@ public class Category {
  @ResponseStatus(HttpStatus.CREATED)
  @ApiOperation(value = "Créer un nouveau catalogue", response = Category.class)
  public Java.enit.Catalog.domain.Category createCatalog(@RequestBody CategoryRequest catalogRequest) {
-	 return catalogservice.createCatalog(catalogRequest);
+	 return catalogservice.createCategory(catalogRequest);
  }
  @GetMapping
  @ResponseStatus(HttpStatus.OK)
  @ApiOperation(value = "Récupérer tous les catalogues", response = CategoryResponse.class, responseContainer = "List")
  public List<CategoryResponse>getAllCatalog(){
-	return  catalogservice.getAllCatalogs();
+	return  catalogservice.getAllCategory();
  }
  @GetMapping("page")
  @ApiOperation(value = "Récupérer tous les catalogues avec pagination", response = CategoryResponse.class, responseContainer = "Page")
