@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.acme</groupId>
   <artifactId>order</artifactId>
@@ -44,10 +46,10 @@
     </dependency>
 
     <dependency>
-    <groupId>org.codehaus.plexus</groupId>
-    <artifactId>plexus-utils</artifactId>
-    <version>3.3.0</version> 
-</dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-utils</artifactId>
+      <version>3.3.0</version>
+    </dependency>
 
 
     <dependency>
@@ -61,8 +63,6 @@
       <artifactId>quarkus-hibernate-orm-panache</artifactId>
     </dependency>
 
-   
-
 
     <dependency>
       <groupId>io.quarkus</groupId>
@@ -70,12 +70,12 @@
       <scope>test</scope>
     </dependency>
 
-<dependency>
-    <groupId>io.quarkus</groupId>
-    <artifactId>quarkus-jdbc-postgresql</artifactId>
-</dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-jdbc-postgresql</artifactId>
+    </dependency>
 
-<dependency>
+    <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-resteasy-reactive-jackson</artifactId>
     </dependency>
@@ -94,12 +94,12 @@
 
 
     <dependency>
-    <groupId>io.quarkus</groupId>
-    <artifactId>quarkus-rest-client</artifactId>
-</dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-rest-client</artifactId>
+    </dependency>
 
 
- <dependency>
+    <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <version>1.18.24</version>
@@ -107,18 +107,17 @@
     </dependency>
 
 
-
-<dependency>
-  <groupId>org.jvnet.jaxb2.maven2</groupId>
-  <artifactId>maven-jaxb2-plugin</artifactId>
-  <version>0.15.3</version>
-</dependency>
+    <dependency>
+      <groupId>org.jvnet.jaxb2.maven2</groupId>
+      <artifactId>maven-jaxb2-plugin</artifactId>
+      <version>0.15.3</version>
+    </dependency>
 
   </dependencies>
   <build>
     <plugins>
       <plugin>
-           <groupId>io.quarkus.platform</groupId>
+        <groupId>io.quarkus.platform</groupId>
         <artifactId>quarkus-maven-plugin</artifactId>
         <version>${quarkus.platform.version}</version>
         <extensions>true</extensions>
@@ -133,12 +132,12 @@
         </executions>
       </plugin>
 
-           <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.8.1</version> <!-- ou la version correspondante à votre projet -->
-            
-           </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version> <!-- ou la version correspondante à votre projet -->
+
+      </plugin>
 
 
       <plugin>
@@ -151,16 +150,16 @@
         </configuration>
       </plugin>
       <plugin>
-    <artifactId>maven-surefire-plugin</artifactId>
-    <version>${surefire-plugin.version}</version>
-    <configuration>
-        <systemPropertyVariables>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${surefire-plugin.version}</version>
+        <configuration>
+          <systemPropertyVariables>
             <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
             <maven.home>${maven.home}</maven.home>
             <maven.settings>${session.request.userSettingsFile.path}</maven.settings>
-        </systemPropertyVariables>
-    </configuration>
-</plugin>
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
       <plugin>
         <artifactId>maven-failsafe-plugin</artifactId>
         <version>${surefire-plugin.version}</version>
@@ -193,7 +192,7 @@
       <properties>
         <skipITs>false</skipITs>
         <quarkus.package.type>native</quarkus.package.type>
-         <quarkus.version>3.4.2.Final</quarkus.version>
+        <quarkus.version>3.4.2.Final</quarkus.version>
       </properties>
     </profile>
   </profiles>
