@@ -4,48 +4,44 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.acme.domain.Order;
 import org.acme.domain.OrderId;
-import org.acme.domain.OrderRepository;
 
 @ApplicationScoped
 @Transactional
-public class OrderRepositoryImpl implements OrderRepository {
+public class OrderRepositoryImpl implements OrderRepository{
 
 	@Inject
 	EntityManager em;
 
 	@Override
 	public void addOrder(Order order) {
-		// TODO Auto-generated method stub
 		em.persist(order);
 	}
 
 	@Override
-	public void UpdateOrder(OrderId OrderID, Order order) {
-		// TODO Auto-generated method stub
+	public void updateOrder(OrderId OrderID, Order order) {
 		em.merge(order);
 	}
 
 	@Override
-	public Order GetOrdrebyid(UUID id) {
-		// TODO Auto-generated method stub
-		return null;
+	public Order getOrdrebyid(UUID id) {
+		return em.find(Order.class, id);
 	}
 
 	@Override
-	public void DeleteOrder(OrderId Orderid) {
-		// TODO Auto-generated method stub
-
+	public void deleteOrder(OrderId orderId) {
+		Order order = em.find(Order.class, orderId);
+		if (order != null) {
+			em.remove(order);
+		}
 	}
 
 	@Override
-	public List<Order> GetAllOrdersByClient(UUID idClient) {
-		// TODO Auto-generated method stub
+	public List<Order> getAllOrdersByClient(UUID idClient) {
 		return em
 				.createQuery("SELECT o FROM Order o WHERE o.clientInfo.id = :clientId ORDER BY o.receivedAt",
 						Order.class)
@@ -55,7 +51,6 @@ public class OrderRepositoryImpl implements OrderRepository {
 
 	@Override
 	public Optional<Order> queryOrderById(UUID idOrder) {
-		// TODO Auto-generated method stub
 		Order o = em.find(Order.class, idOrder);
 		return Optional.ofNullable(o);
 	}

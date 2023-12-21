@@ -6,9 +6,6 @@ import java.time.ZoneId;
 import java.util.Map;
 import java.util.UUID;
 
-import org.acme.domain.DeliveryNotification;
-import org.acme.domain.PricingNotification;
-import org.acme.domain.StockNotification;
 import org.acme.domain.enums.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
@@ -28,64 +25,48 @@ public class Order {
     @Id
     @GeneratedValue
     private OrderId orderId;
-
-    // items
     private Products products;
-
-    // Order Date
     private LocalDateTime receivedAt = LocalDateTime.now(ZoneId.of("UTC"));
-
     private BigDecimal totalAmount = BigDecimal.ZERO;
-
-    // Ordre attributes control
     @Enumerated(EnumType.STRING)
-    private OrderStatus commandState;
-
-    private PaymentNotification paymentVerified; // payment microservice control
-    private DeliveryNotification deliveryVerified; // delivery microservice control
-    private PricingNotification pricingVerified; // pricing microservice control
-    private StockNotification stockVerified; // stock microservice control
+    private OrderStatus orderStatus;
+    private PaymentNotification paymentVerified; 
+    private DeliveryNotification deliveryVerified; 
+    private PricingNotification pricingVerified; 
+    private StockNotification stockVerified; 
 
     public OrderId getOrderId() {
         return orderId;
     }
 
-    // Setter pour commandeId
     public void setOrderId(OrderId commandeId) {
         this.orderId = commandeId;
     }
 
-    // Getter pour products
     public Products getProducts() {
         return products;
     }
 
-    // Setter pour products
     public void setProducts(Products products) {
         this.products = products;
     }
 
-    // Getter pour receivedAt
     public LocalDateTime getReceivedAt() {
         return receivedAt;
     }
 
-    // Setter pour receivedAt
     public void setReceivedAt(LocalDateTime receivedAt) {
         this.receivedAt = receivedAt;
     }
 
-    // Getter pour totalAmount
     public BigDecimal getTotalAmount() {
         return totalAmount;
     }
 
-    // Setter pour totalAmount
     public void setTotalAmount(BigDecimal totalAmount) {
         this.totalAmount = totalAmount;
     }
 
-    // Getter et Setter pour paymentVerified
     public PaymentNotification getPaymentVerified() {
         return paymentVerified;
     }
@@ -94,7 +75,6 @@ public class Order {
         this.paymentVerified = paymentVerified;
     }
 
-    // Getter et Setter pour deliveryVerified
     public DeliveryNotification getDeliveryVerified() {
         return deliveryVerified;
     }
@@ -103,7 +83,6 @@ public class Order {
         this.deliveryVerified = deliveryVerified;
     }
 
-    // Getter et Setter pour pricingVerified
     public PricingNotification getPricingVerified() {
         return pricingVerified;
     }
@@ -112,7 +91,6 @@ public class Order {
         this.pricingVerified = pricingVerified;
     }
 
-    // Getter et Setter pour stockVerified
     public StockNotification getStockVerified() {
         return stockVerified;
     }
@@ -121,7 +99,6 @@ public class Order {
         this.stockVerified = stockVerified;
     }
 
-    // Customer data-related attributes
     private Client clientInfo;
 
     public Client getClientInfo() {
@@ -149,27 +126,23 @@ public class Order {
         this.products = products;
         this.clientInfo = clientInfo;
         this.totalAmount = totalAmount;
-        this.commandState = OrderStatus.CREATED;
-
+        this.orderStatus = OrderStatus.CREATED;
         this.paymentVerified = new PaymentNotification();
         this.paymentVerified.setPayementNotificationState(false);
-
         this.deliveryVerified = new DeliveryNotification();
         this.deliveryVerified.setDeliveryNotificationState(false);
-
         this.pricingVerified = new PricingNotification();
         this.pricingVerified.setPricingNotificationState(false);
-
         this.stockVerified = new StockNotification();
         this.stockVerified.setStockNotificationState(false);
     }
 
     public OrderStatus getStatus() {
-        return commandState; // Utilisez la propriété commandState au lieu de la constante OrderStatus
+        return orderStatus; 
     }
 
     public void setStatus(OrderStatus os) {
-        commandState = os;
+        orderStatus = os;
     }
 
     public void addItem(UUID identifiant, Integer quantite) {
@@ -189,12 +162,9 @@ public class Order {
                 UUID identifiant = entry.getKey();
                 Integer nouvelleQuantite = entry.getValue();
 
-                // Vérifier si l'identifiant existe déjà dans la map des produits
                 if (products.getProductMap().containsKey(identifiant)) {
-                    // Si l'identifiant existe déjà, mettez à jour la quantité
                     products.getProductMap().put(identifiant, nouvelleQuantite);
                 } else {
-                    // Si l'identifiant n'existe pas, ajoutez-le à la map des produits
                     addItem(identifiant, nouvelleQuantite);
                 }
             }

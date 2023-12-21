@@ -16,13 +16,13 @@ import org.acme.api.DTOs.OrderStockDTO;
 import org.acme.domain.Client;
 import org.acme.domain.Order;
 import org.acme.domain.OrderId;
-import org.acme.domain.OrderRepository;
 import org.acme.domain.PaymentNotification;
 import org.acme.domain.Products;
 import org.acme.domain.DeliveryNotification;
 import org.acme.domain.PricingNotification;
 import org.acme.domain.StockNotification;
 import org.acme.domain.enums.OrderStatus;
+import org.acme.repository.OrderRepository;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -192,7 +192,7 @@ public boolean startPaymentRequest(Long cartNumber, Long secretCode, UUID orderI
 	public List<Order> getAllOrdersByClient(UUID idClient) {
 		// TODO Auto-generated method stub
 
-		return orderRepository.GetAllOrdersByClient(idClient);
+		return orderRepository.getAllOrdersByClient(idClient);
 	}
 
 	@Transactional

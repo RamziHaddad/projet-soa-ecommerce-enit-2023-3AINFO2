@@ -1,16 +1,24 @@
 package org.acme.repository;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import org.acme.domain.Order;
+import org.acme.domain.OrderId;
 
-import io.quarkus.hibernate.orm.panache.PanacheRepository;
-import jakarta.enterprise.context.ApplicationScoped;
+public interface OrderRepository {
 
-import jakarta.transaction.Transactional;
+    void addOrder(Order order);
 
-@ApplicationScoped
-@Transactional
-public class OrderRepository implements PanacheRepository<Order> {
-    // On peut injecter un EntityManager au lieu de travailler avec ORM Panache,
-    // mais cela nécessite une configuration manuelle.
+    void updateOrder(OrderId OrderID, Order order);
+
+    Order getOrdrebyid(UUID id);
+
+    void deleteOrder(OrderId Orderid);
+
+    List<Order> getAllOrdersByClient(UUID idClient);
+
+    Optional<Order> queryOrderById(UUID idOrder);
+
 }
