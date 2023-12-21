@@ -1,0 +1,6 @@
+/home/slouma/Desktop/azer/quarkus-getting-started/src/main/java/org/acme/GreetingResource.java
+/home/slouma/Desktop/azer/quarkus-getting-started/src/main/java/org/acme/infrastructure/MailerServiceImp.java
+/home/slouma/Desktop/azer/quarkus-getting-started/src/main/java/org/acme/service/MailerService.java
+/home/slouma/Desktop/azer/quarkus-getting-started/src/main/java/org/acme/repository/MailerRepository.java
+/home/slouma/Desktop/azer/quarkus-getting-started/src/main/java/org/acme/infrastructure/MailerRepositoryImp.java
+/home/slouma/Desktop/azer/quarkus-getting-started/src/main/java/org/acme/api/MailingResource.java
