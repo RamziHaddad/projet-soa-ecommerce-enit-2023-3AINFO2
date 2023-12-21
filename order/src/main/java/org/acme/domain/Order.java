@@ -202,4 +202,18 @@ public class Order {
 
     }
 
+    public void updateFrom(Order newOrder) {
+        // Assuming you have appropriate setter methods for each field
+        this.setCommandeId(newOrder.getCommandeId());
+        this.setProducts(newOrder.getProducts());
+        this.setReceivedAt(newOrder.getReceivedAt());
+        this.setTotalAmount(newOrder.getTotalAmount());
+        this.setCommandState(newOrder.getCommandState());
+        this.setPaymentVerified(newOrder.getPaymentVerified());
+        this.setDeliveryVerified(newOrder.getDeliveryVerified());
+        this.setPricingVerified(newOrder.getPricingVerified());
+        this.setStockVerified(newOrder.getStockVerified());
+        
+    }
+
 }

@@ -10,14 +10,15 @@ import org.acme.domain.Client;
 import org.acme.domain.Order;
 import org.acme.domain.OrderId;
 import org.acme.domain.Products;
+import org.acme.exceptions.EntityNotFoundException;
 
 public interface OrderService {
 
     void createOrder(OrderId orderId, Products products, Client clientInfo, BigDecimal tatalAmount);
 
-    void UpdateOrder(OrderId idOrder, Order ordre);
+    void UpdateOrder(UUID idOrder, Order ordre) throws EntityNotFoundException;
 
-    Order GetOrdrebyid(UUID id);
+    Order GetOrdrebyid(UUID id) throws EntityNotFoundException;
 
     void DeleteOrder(OrderId Orderid);
 
@@ -25,7 +26,7 @@ public interface OrderService {
 
     void liberateItemsFromStock(UUID orderId, Map<UUID, Integer> productMap);
 
-    boolean checkStock(UUID orderId, Map<UUID, Integer> productMap);
+    boolean checkStock(UUID orderId, Map<UUID, Integer> productMap) throws EntityNotFoundException;
 
     BigDecimal checkPricing(UUID orderid, Map<UUID, Integer> productMap);
 

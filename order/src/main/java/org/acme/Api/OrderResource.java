@@ -25,6 +25,7 @@ import org.acme.domain.Client;
 import org.acme.domain.Order;
 import org.acme.domain.OrderId;
 import org.acme.domain.Products;
+import org.acme.exceptions.EntityNotFoundException;
 
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -99,7 +100,7 @@ public Response createOrder(OrderPanierDTO orderPanierDTO) {
     @POST
     @Transactional
     @Path("/check-store")
-    public Response checkStock(OrderStockDTO orderStockDTO) {
+    public Response checkStock(OrderStockDTO orderStockDTO) throws EntityNotFoundException {
         boolean stockAvailable = orderService.checkStock(orderStockDTO.orderId(), orderStockDTO.productMap());
         return Response.ok().entity(stockAvailable).build();
     }
@@ -109,11 +110,11 @@ public Response createOrder(OrderPanierDTO orderPanierDTO) {
     // Step 3
     // check pricing
    
-    
+     // get ou post
     @POST
     @Transactional
     @Path("/Check-pricing")
-    public Response checkPricing(OrderPrincingDTO orderPrincingDTO) {
+    public Response checkPricing(OrderPrincingDTO orderPrincingDTO) throws EntityNotFoundException {
     // Assuming OrderPrincingDTO contains necessary information
     BigDecimal totalPrice = orderService.checkPricing(orderPrincingDTO.orderId(), 
                                                      orderPrincingDTO.productMap());
@@ -122,20 +123,6 @@ public Response createOrder(OrderPanierDTO orderPanierDTO) {
     
     return Response.ok().entity("Pricing check successful. Total Price: " + totalPrice).build();
 }
-
-
-    /*
-     * @POST
-     * 
-     * @Transactional
-     * 
-     * @Path("/Check-pricing")
-     * public void Checkpricing(OrderPrincingDTO OrderPrincingDTO)
-     * {
-     * orderService.checkPricing(OrderPrincingDTO.orderid().id(),
-     * OrderPrincingDTO.products().getProductMap());
-     * }
-     */
 
     // Step 4
     // start payment process
@@ -189,7 +176,7 @@ public Response requestPayment(OrderPayementDTO orderPaymentInfo) {
     @POST
     @Transactional
     @Path("/Start-Delivery")
-    public void startDelivery(OrderDeliveryDto orderDeliveryDto) {
+    public void startDelivery(OrderDeliveryDto orderDeliveryDto) throws EntityNotFoundException {
         orderService.StartDelivery(orderDeliveryDto.orderId(), orderDeliveryDto.idClient(),
                 orderDeliveryDto.address());
     }     

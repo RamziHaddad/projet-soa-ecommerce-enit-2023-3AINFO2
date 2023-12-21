@@ -28,6 +28,7 @@ import org.acme.domain.model.DeliveryNotification;
 import org.acme.domain.model.PricingNotification;
 import org.acme.domain.model.StockNotification;
 import org.acme.domain.model.enums.OrderStatus;
+import org.acme.exceptions.EntityNotFoundException;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -61,10 +62,16 @@ public class OrderServiceImpl implements OrderService {
 	DeliveryService DeliveryService;
 
 	@Override
-	public Order GetOrdrebyid(UUID id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+public Order GetOrdrebyid(UUID id) throws EntityNotFoundException {
+    Optional<Order> optionalOrder = orderRepository.queryOrderById(id);
+
+    if (optionalOrder.isPresent()) {
+        return optionalOrder.get();
+    } else {
+        throw new EntityNotFoundException("Order not found for ID: " + id);
+    }
+}
+
 /* 
 	@Override
 	public void createOrder(OrderId orderId, Products products, Client clientInfo, BigDecimal totalAmount) {
@@ -132,9 +139,20 @@ public boolean startPaymentRequest(Long cartNumber, Long secretCode, UUID orderI
 	}
 
 	@Override
-	public void UpdateOrder(OrderId idOrder, Order ordre) {
-		// TODO Auto-generated method stub
+	public void UpdateOrder(UUID idOrder, Order ordre) throws EntityNotFoundException {
+		Optional<Order> optionalOrder = orderRepository.queryOrderById(idOrder);
 
+    if (optionalOrder.isPresent()) {
+        Order existingOrder = optionalOrder.get();
+        
+        // Update the fields of the existing order with the new order
+        existingOrder.updateFrom(ordre);
+
+        // Save the updated order
+        orderRepository.addOrder(existingOrder);
+    } else {
+        throw new EntityNotFoundException("Order not found for ID: " + idOrder);
+    }
 	}
 
 	@Override
@@ -145,22 +163,49 @@ public boolean startPaymentRequest(Long cartNumber, Long secretCode, UUID orderI
 
 	@Transactional
 	@Override
-	public boolean checkStock(UUID orderId, Map<UUID, Integer> productMap) {
+	public boolean checkStock(UUID orderId, Map<UUID, Integer> productMap) throws EntityNotFoundException {
 		// TODO Auto-generated method stub
 
 		OrderStockDTO StockDTO = new OrderStockDTO(orderId,productMap);
-		return envontoryservice.CheckProducts(StockDTO);
+		
+		boolean res= envontoryservice.CheckProducts(StockDTO);
+		Order order = GetOrdrebyid(orderId);
+           if (res)
+		   {
+             
+			 order.getStockVerified().setStockNotificationState(true);
+
+		   }
+		   else{
+		     order.getStockVerified().setStockNotificationState(true);
+		   }
+        order.setCommandState(OrderStatus.PENDING);
+		UpdateOrder(orderId,order ) ;
+		
+			 return res;
 	}
 
 	@Override
-	public BigDecimal checkPricing(UUID orderid, Map<UUID, Integer> productMap) {
+	public BigDecimal checkPricing(UUID orderid, Map<UUID, Integer> productMap) throws EntityNotFoundException {
 		// TODO Auto-generated method stub
 
-		OrderPrincingDTO PricingDTO = new OrderPrincingDTO(orderid, productMap);
+		OrderPrincingDTO pricingDTO = new OrderPrincingDTO(orderid, productMap);
 
-		return Pricingservice.CheckPricing(PricingDTO);
+		BigDecimal pricingResult = Pricingservice.CheckPricing(pricingDTO);
+	
+		Order order = GetOrdrebyid(orderid);
+		if (pricingResult.compareTo(BigDecimal.ZERO) < 0) {
+			// Assuming pricingResult is negative or zero indicates pricing failure
+			order.getPricingVerified().setPricingNotificationState(false);
+		} else {
+			order.getPricingVerified().setPricingNotificationState(true);
+		}
+
+	    order.setCommandState(OrderStatus.PENDING);
+		UpdateOrder(orderid, order);
+	
+		return pricingResult;
 	}
-
 	@Override
 	public void sendNotificationEmailFailed(UUID commandeId, LocalDateTime recievedAT, BigDecimal totalAmount,
 			boolean orderstatus) {
@@ -168,6 +213,7 @@ public boolean startPaymentRequest(Long cartNumber, Long secretCode, UUID orderI
 		OrderEmailDTO EmailDTO = new OrderEmailDTO(commandeId, totalAmount, recievedAT, orderstatus);
 		// TODO Auto-generated method stub
 		emailingservice.sendFailedMail(EmailDTO);
+		
 
 	}
 
@@ -182,16 +228,22 @@ public boolean startPaymentRequest(Long cartNumber, Long secretCode, UUID orderI
 	}
 
 	@Override
-	public void StartDelivery(UUID orderId, UUID idClient, String address) {
+	public void StartDelivery(UUID orderId, UUID idClient, String address) throws EntityNotFoundException {
 
 		OrderDeliveryDto DeliveryDTO =new OrderDeliveryDto(orderId, idClient, address);
 		// TODO Auto-generated method stub
+
 		DeliveryService.StartDelivery(DeliveryDTO);
+		
+        Order order = GetOrdrebyid(orderId);
+		order.getDeliveryVerified().setDeliveryNotificationState(true);
+        order.setCommandState(OrderStatus.FINISHED);
+		UpdateOrder(orderId, order);
 	}
 
 	@Transactional
 	@Override
-	public void createOrder(Order order) {
+	public void createOrder(Order order) throws EntityNotFoundException {
 		// BigDecimal price = order.getTotalAmount(); // Vérification du microservice
 		// pricing
 		BigDecimal price = checkPricing(order.getCommandeId().id(), order.getProducts().getProductMap());
