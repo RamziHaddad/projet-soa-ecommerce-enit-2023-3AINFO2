@@ -1,4 +1,5 @@
 /home/slouma/Desktop/kk/projet-soa-ecommerce-enit-2023-3AINFO2/mailing/src/main/java/org/acme/infrastructure/MailerRepositoryImp.java
+/home/slouma/Desktop/kk/projet-soa-ecommerce-enit-2023-3AINFO2/mailing/src/main/java/org/acme/repository/TemplateShippingOngoingRepository.java
 /home/slouma/Desktop/kk/projet-soa-ecommerce-enit-2023-3AINFO2/mailing/src/main/java/org/acme/infrastructure/MailerServiceImp.java
 /home/slouma/Desktop/kk/projet-soa-ecommerce-enit-2023-3AINFO2/mailing/src/main/java/org/acme/api/MailingResource.java
 /home/slouma/Desktop/kk/projet-soa-ecommerce-enit-2023-3AINFO2/mailing/src/main/java/org/acme/repository/TemplatePaimentConfirmedRepository.java

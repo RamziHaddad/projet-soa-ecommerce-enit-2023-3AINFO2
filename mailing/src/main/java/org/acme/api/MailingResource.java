@@ -11,9 +11,15 @@ public class MailingResource {
     @Inject MailerService mailerService;
 
     @POST
-    @Path("/sendMail")
-    public void sendMail(){
-        System.out.println("done");
+    @Path("/ConfirmationPaiment")
+    public void sendMailConfirmationPaiment(){
+
         this.mailerService.notifyConfirmationPaiment("slim", "slim.njah2@gmail.com");
+
+    }
+    @POST
+    @Path("/ShippingOngoing")
+    public void sendMailShippingOngoing(){
+        this.mailerService.notifyShippingOngoing("slim", "slim.njah2@gmail.com");   
     }
 }
