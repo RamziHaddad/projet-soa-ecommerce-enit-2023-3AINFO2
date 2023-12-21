@@ -13,6 +13,7 @@ public class MailingResource {
     @POST
     @Path("/sendMail")
     public void sendMail(){
-        this.mailerService.notifyConfirmationPaiment();
+        System.out.println("done");
+        this.mailerService.notifyConfirmationPaiment("slim", "slim.njah2@gmail.com");
     }
 }
