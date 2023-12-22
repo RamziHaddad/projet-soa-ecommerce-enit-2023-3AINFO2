@@ -12,8 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import Java.enit.Catalog.catalogKafkaProducer.CategoryKafkaProducer;
+import lombok.AllArgsConstructor;
 import Java.enit.Catalog.dto.CategoryRequest;
 import Java.enit.Catalog.dto.CategoryResponse;
 import Java.enit.Catalog.dto.ProductRequest;
@@ -21,7 +20,8 @@ import Java.enit.Catalog.dto.ProductResponse;
 import Java.enit.Catalog.service.ProductService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-
+@RestController
+@AllArgsConstructor
 @Api(tags = "Catalog API", value = "Catalog API")
 @RequestMapping("/api/product")
 public class Product {
