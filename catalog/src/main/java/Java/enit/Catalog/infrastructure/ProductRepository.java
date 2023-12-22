@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import Java.enit.Catalog.domain.Category;
 import Java.enit.Catalog.domain.Marque;
 import Java.enit.Catalog.domain.Product;
 
