@@ -1,16 +1,16 @@
 package com.enit.payment.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 @Entity
 @Table(name = "Payments")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,4 +21,9 @@ public class Payment {
     private int cardNumber;
     @Column(name = "secret_code")
     private int secretCode;
+
+
+
+
+
 }

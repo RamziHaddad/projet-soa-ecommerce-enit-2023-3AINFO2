@@ -1,9 +1,0 @@
-DESCRIPTION
-Le microservice "pricing" est responsable de la détermination du prix d'un produit ou d'un ensemble de produits en fonction de l'identifiant du produit et de la quantité. Voici les principales fonctionnalités du microservice "pricing":
-
-*Gestion des prix des produits:
-Il maintient une liste des prix associés à chaque produit.
-
-
-*Gestion des promotions:
-Il gère les promotions en associant un pourcentage de réduction à un produit spécifique. Cela permet d'appliquer des remises sur les produits.
