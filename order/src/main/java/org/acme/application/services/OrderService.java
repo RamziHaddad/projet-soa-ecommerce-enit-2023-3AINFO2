@@ -10,39 +10,36 @@ import org.acme.domain.Client;
 import org.acme.domain.Order;
 import org.acme.domain.OrderId;
 import org.acme.domain.Products;
+import org.acme.exceptions.OrderNotFoundException;
 
 public interface OrderService {
 
-    void createOrder(OrderId orderId, Products products, Client clientInfo, BigDecimal tatalAmount);
+        void createOrder(OrderId orderId, Products products, Client clientInfo, BigDecimal tatalAmount);
 
-    void UpdateOrder(OrderId idOrder, Order ordre);
+        void updateOrder(UUID idOrder, Order ordre) throws OrderNotFoundException;
 
-    Order GetOrdrebyid(UUID id);
+        Order getOrdrebyId(UUID id);
 
-    void DeleteOrder(OrderId Orderid);
+        boolean startPaymentRequest(Long cartNumber, Long secretCode, UUID orderId, BigDecimal totalAmount);
 
-    boolean startPaymentRequest(Long cartNumber, Long secretCode, UUID orderId, BigDecimal totalAmount);
+        void liberateItemsFromStock(UUID orderId, Map<UUID, Integer> productMap);
 
-    void liberateItemsFromStock(UUID orderId, Map<UUID, Integer> productMap);
+        boolean checkStock(UUID orderId, Map<UUID, Integer> productMap) throws OrderNotFoundException;
 
-    boolean checkStock(UUID orderId, Map<UUID, Integer> productMap);
+        BigDecimal checkPricing(UUID orderid, Map<UUID, Integer> productMap) throws OrderNotFoundException;
 
-    BigDecimal checkPricing(UUID orderid, Map<UUID, Integer> productMap);
+        void sendNotificationEmailFailed(UUID commandeId, LocalDateTime recievedAT, BigDecimal totalAmount,
+                        boolean orderstatus);
 
-    void sendNotificationEmailFailed(UUID commandeId, LocalDateTime recievedAT, BigDecimal totalAmount,
-            boolean orderstatus);
+        void sendNotificationEmailSuccess(UUID commandeId, LocalDateTime recievedAT, BigDecimal totalAmount,
+                        boolean orderstatus);
 
-    void sendNotificationEmailSuccess(UUID commandeId, LocalDateTime recievedAT, BigDecimal totalAmount,
-            boolean orderstatus);
+        void createOrder(Order order);
 
-    void createOrder(Order order);
+        List<Order> getAllOrdersByClient(UUID idClient);
 
-    List<Order> getAllOrdersByClient(UUID idClient);
+        Optional<Order> getOrderById(UUID idOrder);
 
-    Optional<Order> getOrderById(UUID idOrder);
-    
-    
-    void StartDelivery(UUID orderId, UUID idClient, String address);
-    
+        void startDelivery(UUID orderId, UUID idClient, String address) throws OrderNotFoundException;
 
 }

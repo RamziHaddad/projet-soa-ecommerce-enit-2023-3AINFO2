@@ -10,5 +10,4 @@ public record OrderId(UUID id) {
     public OrderId(UUID id) {
         this.id = id;
     }
-
 }

@@ -172,4 +172,16 @@ public class Order {
 
     }
 
+    public void updateFrom(Order newOrder) {
+        this.setOrderId(newOrder.getOrderId());
+        this.setProducts(newOrder.getProducts());
+        this.setReceivedAt(newOrder.getReceivedAt());
+        this.setTotalAmount(newOrder.getTotalAmount());
+        this.setOrderStatus(newOrder.getOrderStatus());
+        this.setPaymentVerified(newOrder.getPaymentVerified());
+        this.setDeliveryVerified(newOrder.getDeliveryVerified());
+        this.setPricingVerified(newOrder.getPricingVerified());
+        this.setStockVerified(newOrder.getStockVerified());
+    }
+
 }

@@ -1,4 +1,4 @@
-package org.acme.application.services; 
+package org.acme.application.services;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import jakarta.persistence.EntityNotFoundException;
 
 import org.acme.api.DTOs.OrderDeliveryDTO;
 import org.acme.api.DTOs.OrderEmailDTO;
@@ -23,6 +24,7 @@ import org.acme.domain.PricingNotification;
 import org.acme.domain.StockNotification;
 import org.acme.domain.enums.OrderStatus;
 import org.acme.repository.OrderRepository;
+import org.acme.exceptions.OrderNotFoundException;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -45,7 +47,7 @@ public class OrderServiceImpl implements OrderService {
 
 	@Inject
 	@RestClient
-	StockService envontoryservice;;
+	StockService stockService;
 
 	@Inject
 	@RestClient
@@ -56,81 +58,108 @@ public class OrderServiceImpl implements OrderService {
 	DeliveryService DeliveryService;
 
 	@Override
-	public Order GetOrdrebyid(UUID id) {
-		// TODO Auto-generated method stub
-		return null;
+	public Order getOrdrebyId(UUID id) throws EntityNotFoundException {
+		Optional<Order> optionalOrder = orderRepository.queryOrderById(id);
+
+		if (optionalOrder.isPresent()) {
+			return optionalOrder.get();
+		} else {
+			throw new EntityNotFoundException("Order not found for ID: " + id);
+		}
 	}
 
 	@Override
-public void createOrder(OrderId orderId, Products products, Client clientInfo, BigDecimal totalAmount) {
-    // Initialiser les objets de notification à false
-    PaymentNotification paymentNotification = new PaymentNotification();
-    paymentNotification.setPayementNotificationState(false);
+	public void createOrder(OrderId orderId, Products products, Client clientInfo, BigDecimal totalAmount) {
+		// Initialiser les objets de notification à false
+		PaymentNotification paymentNotification = new PaymentNotification();
+		paymentNotification.setPayementNotificationState(false);
 
-    DeliveryNotification deliveryNotification = new DeliveryNotification();
-    deliveryNotification.setDeliveryNotificationState(false);
+		DeliveryNotification deliveryNotification = new DeliveryNotification();
+		deliveryNotification.setDeliveryNotificationState(false);
 
-    PricingNotification pricingNotification = new PricingNotification();
-    pricingNotification.setPricingNotificationState(false);
+		PricingNotification pricingNotification = new PricingNotification();
+		pricingNotification.setPricingNotificationState(false);
 
-    StockNotification stockNotification = new StockNotification();
-    stockNotification.setStockNotificationState(false);
+		StockNotification stockNotification = new StockNotification();
+		stockNotification.setStockNotificationState(false);
 
-    // Créer une nouvelle commande
-    Order order = Order.of(orderId, products, LocalDateTime.now(ZoneId.of("UTC")), totalAmount, OrderStatus.CREATED,
-            paymentNotification, deliveryNotification, pricingNotification, stockNotification, clientInfo);
+		// Créer une nouvelle commande
+		Order order = Order.of(orderId, products, LocalDateTime.now(ZoneId.of("UTC")), totalAmount, OrderStatus.CREATED,
+				paymentNotification, deliveryNotification, pricingNotification, stockNotification, clientInfo);
 
-    // Ajouter la commande au repository
-    orderRepository.addOrder(order);
-}
+		// Ajouter la commande au repository
+		orderRepository.addOrder(order);
+	}
 
-@Override
-public boolean startPaymentRequest(Long cartNumber, Long secretCode, UUID orderId, BigDecimal totalAmount) {
-    // Créer un objet OrderPaymentDTO avec les informations nécessaires
-    OrderPaymentDTO orderPaymentDTO = new OrderPaymentDTO(orderId, totalAmount, secretCode, secretCode);
-    
-    // Appeler la méthode startPayment du service avec l'objet orderPaymentDTO
-   return paymentService.startPayment(orderPaymentDTO);
+	@Override
+	public boolean startPaymentRequest(Long cartNumber, Long secretCode, UUID orderId, BigDecimal totalAmount) {
+		// Créer un objet OrderPaymentDTO avec les informations nécessaires
+		OrderPaymentDTO orderPaymentDTO = new OrderPaymentDTO(orderId, totalAmount, secretCode, secretCode);
 
-}
+		// Appeler la méthode startPayment du service avec l'objet orderPaymentDTO
+		return paymentService.startPayment(orderPaymentDTO);
 
+	}
 
 	@Override
 	public void liberateItemsFromStock(UUID orderId, Map<UUID, Integer> productMap) {
-		// TODO Auto-generated method stub
 		OrderStockDTO StockDTO = new OrderStockDTO(orderId, productMap);
-		envontoryservice.LiberateProducts(StockDTO);
-
+		stockService.LiberateProducts(StockDTO);
 	}
 
 	@Override
-	public void UpdateOrder(OrderId idOrder, Order ordre) {
-		// TODO Auto-generated method stub
+	public void updateOrder(UUID idOrder, Order ordre) throws OrderNotFoundException {
+		Optional<Order> optionalOrder = orderRepository.queryOrderById(idOrder);
 
-	}
+		if (optionalOrder.isPresent()) {
+			Order existingOrder = optionalOrder.get();
 
-	@Override
-	public void DeleteOrder(OrderId Orderid) {
-		// TODO Auto-generated method stub
+			// Update the fields of the existing order with the new order
+			existingOrder.updateFrom(ordre);
 
+			// Save the updated order
+			orderRepository.addOrder(existingOrder);
+		} else {
+			throw new OrderNotFoundException("Order not found for ID: " + idOrder);
+		}
 	}
 
 	@Transactional
 	@Override
-	public boolean checkStock(UUID orderId, Map<UUID, Integer> productMap) {
-		// TODO Auto-generated method stub
+	public boolean checkStock(UUID orderId, Map<UUID, Integer> productMap) throws OrderNotFoundException {
+		OrderStockDTO StockDTO = new OrderStockDTO(orderId, productMap);
+		boolean res = stockService.CheckProducts(StockDTO);
+		Order order = getOrdrebyId(orderId);
+		if (res) {
 
-		OrderStockDTO StockDTO = new OrderStockDTO(orderId,productMap);
-		return envontoryservice.CheckProducts(StockDTO);
+			order.getStockVerified().setStockNotificationState(true);
+
+		} else {
+			order.getStockVerified().setStockNotificationState(true);
+		}
+		order.setOrderStatus(OrderStatus.PENDING);
+		updateOrder(orderId, order);
+
+		return res;
 	}
 
 	@Override
-	public BigDecimal checkPricing(UUID orderid, Map<UUID, Integer> productMap) {
-		// TODO Auto-generated method stub
+	public BigDecimal checkPricing(UUID orderId, Map<UUID, Integer> productMap) throws OrderNotFoundException {
+		OrderPricingDTO pricingDTO = new OrderPricingDTO(orderId, productMap);
+		BigDecimal pricingResult = Pricingservice.CheckPricing(pricingDTO);
 
-		OrderPricingDTO PricingDTO = new OrderPricingDTO(orderid, productMap);
+		Order order = getOrdrebyId(orderId);
+		if (pricingResult.compareTo(BigDecimal.ZERO) < 0) {
+			order.getPricingVerified().setPricingNotificationState(false);
+		} else {
+			order.getPricingVerified().setPricingNotificationState(true);
+		}
 
-		return Pricingservice.CheckPricing(PricingDTO);
+		order.setStatus(OrderStatus.PENDING);
+
+		updateOrder(orderId, order);
+
+		return pricingResult;
 	}
 
 	@Override
@@ -138,67 +167,58 @@ public boolean startPaymentRequest(Long cartNumber, Long secretCode, UUID orderI
 			boolean orderstatus) {
 		orderstatus = false;
 		OrderEmailDTO EmailDTO = new OrderEmailDTO(commandeId, totalAmount, recievedAT, orderstatus);
-		// TODO Auto-generated method stub
 		emailingservice.sendFailedMail(EmailDTO);
-
 	}
 
 	@Override
 	public void sendNotificationEmailSuccess(UUID commandeId, LocalDateTime recievedAT, BigDecimal totalAmount,
 			boolean orderstatus) {
-		// TODO Auto-generated method stub
 		orderstatus = true;
 		OrderEmailDTO EmailDTO = new OrderEmailDTO(commandeId, totalAmount, recievedAT, orderstatus);
-		// TODO Auto-generated method stub
 		emailingservice.sendSuccessMail(EmailDTO);
 	}
 
 	@Override
-	public void StartDelivery(UUID orderId, UUID idClient, String address) {
+	public void startDelivery(UUID orderId, UUID idClient, String address) throws OrderNotFoundException {
 
-		OrderDeliveryDTO DeliveryDTO =new OrderDeliveryDTO(orderId, idClient, address);
-		// TODO Auto-generated method stub
+		OrderDeliveryDTO DeliveryDTO = new OrderDeliveryDTO(orderId, idClient, address);
 		DeliveryService.StartDelivery(DeliveryDTO);
+		Order order = getOrdrebyId(orderId);
+		order.getDeliveryVerified().setDeliveryNotificationState(true);
+		order.setStatus(OrderStatus.FINISHED);
+		updateOrder(orderId, order);
 	}
 
 	@Transactional
 	@Override
 	public void createOrder(Order order) {
-		// BigDecimal price = order.getTotalAmount(); // Vérification du microservice
-		// pricing
-		BigDecimal price = checkPricing(order.getOrderId().id(), order.getProducts().getProductMap());
-
-		if (price == null) {
-			throw new RuntimeException("couldn't determine price");
-		} else {
-			// Mettre à jour le montant total de la commande avec le prix
-			order.setTotalAmount(price);
-
-			// Mettre à jour l'état de vérification du pricing
-			if (order.getPricingVerified() != null) {
-				order.getPricingVerified().setPricingNotificationState(true);
+		BigDecimal price;
+		try {
+			price = checkPricing(order.getOrderId().id(), order.getProducts().getProductMap());
+			if (price == null) {
+				throw new RuntimeException("couldn't determine price");
+			} else {
+				order.setTotalAmount(price);
+				if (order.getPricingVerified() != null) {
+					order.getPricingVerified().setPricingNotificationState(true);
+				}
+				order.setStatus(OrderStatus.RECEIVED);
 			}
-
-			// Mettre à jour le statut de la commande
-			order.setStatus(OrderStatus.RECEIVED);
+			orderRepository.addOrder(order);
+		} catch (OrderNotFoundException e) {
+			e.printStackTrace();
 		}
-
-		// Ajouter la commande à la base de données
-		orderRepository.addOrder(order);
 	}
 
 	@Transactional
 	@Override
 	public List<Order> getAllOrdersByClient(UUID idClient) {
-		// TODO Auto-generated method stub
-
 		return orderRepository.getAllOrdersByClient(idClient);
 	}
 
 	@Transactional
 	@Override
 	public Optional<Order> getOrderById(UUID idOrder) {
-		// TODO Auto-generated method stub
 		return orderRepository.queryOrderById(idOrder);
 	}
 

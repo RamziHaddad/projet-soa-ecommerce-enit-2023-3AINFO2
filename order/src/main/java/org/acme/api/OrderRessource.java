@@ -24,7 +24,7 @@ import org.acme.domain.Client;
 import org.acme.domain.Order;
 import org.acme.domain.OrderId;
 import org.acme.domain.Products;
-
+import org.acme.exceptions.OrderNotFoundException;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
@@ -56,7 +56,6 @@ public class OrderRessource {
     }
 
     // orchestration using SAGA pattern
-
     // Step 1
     // create order
     @POST
@@ -92,13 +91,12 @@ public class OrderRessource {
         }
     }
 
-
     // Step 2
     // check stock
     @POST
     @Transactional
     @Path("/check-store")
-    public Response checkStock(OrderStockDTO orderStockDTO) {
+    public Response checkStock(OrderStockDTO orderStockDTO) throws OrderNotFoundException {
         boolean stockAvailable = orderService.checkStock(orderStockDTO.orderId(), orderStockDTO.productMap());
         return Response.ok().entity(stockAvailable).build();
     }
@@ -107,12 +105,10 @@ public class OrderRessource {
 
     // Step 3
     // check pricing
-
-
     @POST
     @Transactional
-    @Path("/Check-pricing")
-    public Response checkPricing(OrderPricingDTO orderPrincingDTO) {
+    @Path("/check-pricing")
+    public Response checkPricing(OrderPricingDTO orderPrincingDTO) throws OrderNotFoundException {
         // Assuming OrderPrincingDTO contains necessary information
         BigDecimal totalPrice = orderService.checkPricing(orderPrincingDTO.orderId(),
                 orderPrincingDTO.productMap());
@@ -122,25 +118,11 @@ public class OrderRessource {
         return Response.ok().entity("Pricing check successful. Total Price: " + totalPrice).build();
     }
 
-
-    /*
-     * @POST
-     *
-     * @Transactional
-     *
-     * @Path("/Check-pricing")
-     * public void Checkpricing(OrderPrincingDTO OrderPrincingDTO)
-     * {
-     * orderService.checkPricing(OrderPrincingDTO.orderid().id(),
-     * OrderPrincingDTO.products().getProductMap());
-     * }
-     */
-
     // Step 4
     // start payment process
     @POST
     @Transactional
-    @Path("/Start-payement")
+    @Path("/start-payement")
     public Response requestPayment(OrderPaymentDTO orderPaymentInfo) {
         boolean paymentResult = orderService.startPaymentRequest(orderPaymentInfo.cartNumber(),
                 orderPaymentInfo.secretCode(),
@@ -158,7 +140,7 @@ public class OrderRessource {
     // send notification mail of failed payment
     @POST
     @Transactional
-    @Path("/NotificationMail-PaymentFailed")
+    @Path("/notificationMail-PaymentFailed")
     public void emailNotificationFailed(OrderEmailDTO orderEmailDTO) {
 
         orderService.sendNotificationEmailFailed(orderEmailDTO.CommandeId(), orderEmailDTO.RecievedAT(),
@@ -168,7 +150,7 @@ public class OrderRessource {
     // Compensate transaction by releasing products from stock
     @POST
     @Transactional
-    @Path("/NotificationStock-LiberateItems")
+    @Path("/notificationStock-LiberateItems")
     public void liberateItemsFromStock(OrderStockDTO orderStockDTO) {
         orderService.liberateItemsFromStock(orderStockDTO.orderId(), orderStockDTO.productMap());
     }
@@ -177,7 +159,7 @@ public class OrderRessource {
     // send notification mail of successful payment
     @POST
     @Transactional
-    @Path("/NotificationMail-PaymentSucceed")
+    @Path("/notificationMail-PaymentSucceed")
     public void emailNotificationSuccess(OrderEmailDTO orderEmailDTO) {
         orderService.sendNotificationEmailSuccess(orderEmailDTO.CommandeId(), orderEmailDTO.RecievedAT(),
                 orderEmailDTO.TotalAmount(), orderEmailDTO.Orderstatus());
@@ -187,17 +169,10 @@ public class OrderRessource {
 
     @POST
     @Transactional
-    @Path("/Start-Delivery")
-    public void startDelivery(OrderDeliveryDTO orderDeliveryDto) {
-        orderService.StartDelivery(orderDeliveryDto.orderId(), orderDeliveryDto.idClient(),
+    @Path("/start-Delivery")
+    public void startDelivery(OrderDeliveryDTO orderDeliveryDto) throws OrderNotFoundException {
+        orderService.startDelivery(orderDeliveryDto.orderId(), orderDeliveryDto.idClient(),
                 orderDeliveryDto.address());
     }
-
-
-// in case of  unavailability of items
-
-
-
-    // in case of unavailability of items
-
+    
 }
