@@ -38,7 +38,7 @@ public class Product {
 	Java.enit.Catalog.domain.Product newProduct= productService.createProduct(productRequest);
 	ProductEvent productEvent = new ProductEvent();
     productEvent.setProduct_id(newProduct.getId());  
-    kafkaTemplate.send("catalog_topic", String.valueOf(productEvent.getProduct_id()), productEvent);
+    kafkaTemplate.send("ProductAddedInCatalog", String.valueOf(productEvent.getProduct_id()), productEvent);
 	return newProduct; 
 	}
  @GetMapping
