@@ -14,16 +14,10 @@ import java.math.BigDecimal;
 public class PricingResource {
     @Inject
     PricingService pricingService;
-    @GET
-    @Produces(MediaType.TEXT_PLAIN)
-    public String hello() {
-        return "Hello from RESTEasy Reactive";
-    }
 
-    /*
     @GET
     public BigDecimal checkPricing(OrderPricingDTO orderPricingDTO) {
-        return pricingService.priceProducts(orderPricingDTO);
+        return pricingService.priceProducts(orderPricingDTO.productMap());
     }
-    */
+
 }
