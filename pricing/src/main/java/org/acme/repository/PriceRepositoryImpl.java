@@ -1,21 +1,22 @@
 package org.acme.repository;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
+import org.acme.domain.Discount;
 import org.acme.domain.PriceRepository;
 import org.acme.domain.ProductPrice;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 @ApplicationScoped
+@Transactional
 public class PriceRepositoryImpl implements PriceRepository {
-    private List<ProductPrice> data = new ArrayList<ProductPrice>(Arrays.asList(
-            new ProductPrice(),
-            new ProductPrice()
-            ));
+    @Inject
+    EntityManager entityManager;
     @Override
-    public ProductPrice getProductPrice(UUID productId) {
-        return null;
+    public Optional<ProductPrice> getProductPrice(UUID productId) {
+        return Optional.ofNullable(entityManager.find(ProductPrice.class, productId));
     }
 }
