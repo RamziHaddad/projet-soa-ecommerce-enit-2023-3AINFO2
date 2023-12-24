@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
 
-@FeignClient(name = "bank-service", url = "http://localhost:8099/bank")
+@FeignClient(name = "bank-service", url = "http://localhost:8099/payment")
 public interface BankService {
     @GetMapping("/{id}")
     BigDecimal withdrawMoneyFromAccount(@RequestParam("money") BigDecimal money, @PathVariable("id") Long id);

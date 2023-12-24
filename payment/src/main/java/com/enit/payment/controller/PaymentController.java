@@ -6,18 +6,19 @@ import com.enit.payment.services.BankService;
 import com.enit.payment.services.PaymentService;
 import feign.Response;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-
+import org.springframework.scheduling.annotation.EnableScheduling;
 @RestController
 @RequestMapping("/api/payment")
 
 public class PaymentController {
         private final PaymentService paymentService;
-        //private final BankService banque;
-        public PaymentController(PaymentService paymentService) {
+        private final BankService banque;
+        public PaymentController(PaymentService paymentService,BankService banque) {
             this.paymentService = paymentService;
-            //this.banque = banque;
+            this.banque = banque;
         }
         @GetMapping("/getAllPayment/")
         public List<Payment> getAllPayments(){
@@ -29,15 +30,51 @@ public class PaymentController {
             return paymentService.getPayment(id);
         }
 
-        /*
-        @PostMapping
-        public Response startPayment(PaymentRequest p){
-            Payment paymentAdded = new Payment(p.getId(),p.getAmount(),p.getcardNumber(),p.getSecretCode());
-            Payment paymentAdded = Payment.builder();
-            banque.makeNewPayment(paymentAdded);
-            paymentService.addPayment(paymentAdded);
-            return ResponseEntity.ok(Response.OK(paymentAdded).build());
-            //to do: save in bd
+        @PostMapping("/TimeOutPayment")
+        @Scheduled(fixedRate = 20000) //timeout pattern 20 seconds
+        public Response startPaymentTimeout(PaymentRequest p){
+            Payment paymentAdded = Payment.builder()
+                    .id(p.getId())
+                    .amount(p.getAmount())
+                    .cardNumber(p.getCartNumber())
+                    .secretCode(p.getSecretCode())
+                    .build();
+            Response res = banque.makeNewPayment(p);
+            if(res.status() >= 200 && res.status() < 300){
+                paymentService.addPayment(paymentAdded);
+            }
+            return res;
         }
-        */
+        int maxRetries = 5;
+        long retryDelayMillis;
+        @PostMapping("/RetryPayment")  //with retry pattern
+        public Response startPaymentRetry(PaymentRequest p) {
+            int retries = 0;
+            Response res;
+            do {
+                Payment paymentAdded = Payment.builder()
+                        .id(p.getId())
+                        .amount(p.getAmount())
+                        .cardNumber(p.getCartNumber())
+                        .secretCode(p.getSecretCode())
+                        .build();
+                res = banque.makeNewPayment(p);
+                if (res.status() >= 200 && res.status() < 300) {
+                    paymentService.addPayment(paymentAdded);
+                    break;  // Payment succeeded, exit the loop
+                }
+                // Payment failed, retry after a delay
+                retries++;
+                if (retries <= maxRetries) {
+                    try {
+                        Thread.sleep(retryDelayMillis);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                } else {
+                    break;// Max retries reached, break out of the loop
+                }
+            } while (true);
+            return res;
+        }
 }
