@@ -85,4 +85,19 @@ public class DefaultProductEventProcessingService implements ProductEventProcess
         return new ProductEventResponseDTO("Order Canceled");
 
     }
+    private ProductEventResponseDTO processConfirmation(ProductEventDTO productEventDTO, Product product) {
+        if (product != null && product.getTotalQuantity() >= productEventDTO.getQuantity()) {
+            product.setTotalQuantity(product.getTotalQuantity() - productEventDTO.getQuantity());
+            product.setRequestedQuantity(product.getRequestedQuantity() + productEventDTO.getQuantity());
+            productService.update(product);
+    
+            logSuccess("Order Processed Successfully", product.getId(), product.getRequestedQuantity());
+    
+            return new ProductEventResponseDTO("Order Processed Successfully");
+        } else {
+            logWarning("Insufficient Quantity, Order Failed", productEventDTO.getIdProduct(), productEventDTO.getQuantity());
+            return new ProductEventResponseDTO("Insufficient Quantity, Order Failed");
+        }
+    }
+    
 }
