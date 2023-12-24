@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.UUID;
+
 @Entity
 @Table(name = "Payments")
 @Getter
@@ -14,13 +16,13 @@ import java.math.BigDecimal;
 public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private UUID id;
     @Column(name = "Amount")
     private BigDecimal amount;
     @Column(name = "card_number")
-    private int cardNumber;
+    private Long cardNumber;
     @Column(name = "secret_code")
-    private int secretCode;
+    private Long secretCode;
 
 
 
