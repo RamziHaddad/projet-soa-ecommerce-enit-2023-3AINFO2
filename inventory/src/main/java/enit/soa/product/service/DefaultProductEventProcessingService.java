@@ -36,16 +36,14 @@ public class DefaultProductEventProcessingService implements ProductEventProcess
         }
     }
 
-  
-
     private void logSuccess(String message, String string, Long long1) {
         LOG.log(Level.INFO, "{0}. Product: {1}, Remaining Quantity: {2}",
-                new Object[]{message, string, long1});
+                new Object[] { message, string, long1 });
     }
 
     private void logWarning(String message, String string, Long long1) {
         LOG.log(Level.WARNING, "{0}. Product: {1}, Requested Quantity: {2}",
-                new Object[]{message, string, long1});
+                new Object[] { message, string, long1 });
     }
 
     @Override
@@ -58,5 +56,33 @@ public class DefaultProductEventProcessingService implements ProductEventProcess
         }
     }
 
-    
+    private ProductEventResponseDTO processCancellation(ProductEventDTO productEventDTO, Product product) {
+        product.setTotalQuantity(product.getTotalQuantity() + productEventDTO.getQuantity());
+        product.setRequestedQuantity(product.getRequestedQuantity() - productEventDTO.getQuantity());
+        productService.update(product);
+
+        logSuccess("Order Canceled Successfully", product.getId(), product.getRequestedQuantity());
+
+        return new ProductEventResponseDTO("Order Canceled");
+    }
+
+    private ProductEventDTO fromJsonString(String jsonString) {
+        try {
+            return objectMapper.readValue(jsonString, ProductEventDTO.class);
+        } catch (IOException e) {
+            LOG.warning("Error parsing JSON string: " + e.getMessage() + "\nJSON String: " + jsonString);
+            return null; // or throw an exception, depending on your error handling strategy
+        }
+    }
+
+    private ProductEventResponseDTO processCancellation(ProductEventDTO productEventDTO, Product product) {
+        product.setTotalQuantity(product.getTotalQuantity() + productEventDTO.getQuantity());
+        product.setRequestedQuantity(product.getRequestedQuantity() - productEventDTO.getQuantity());
+        productService.update(product);
+
+        logSuccess("Order Canceled Successfully", product.getId(), product.getRequestedQuantity());
+
+        return new ProductEventResponseDTO("Order Canceled");
+
+    }
 }
