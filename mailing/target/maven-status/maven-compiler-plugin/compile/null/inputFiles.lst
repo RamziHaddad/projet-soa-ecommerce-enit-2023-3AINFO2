@@ -4,5 +4,7 @@
 /home/slouma/Desktop/kk/projet-soa-ecommerce-enit-2023-3AINFO2/mailing/src/main/java/org/acme/api/MailingResource.java
 /home/slouma/Desktop/kk/projet-soa-ecommerce-enit-2023-3AINFO2/mailing/src/main/java/org/acme/repository/TemplatePaimentConfirmedRepository.java
 /home/slouma/Desktop/kk/projet-soa-ecommerce-enit-2023-3AINFO2/mailing/src/main/java/org/acme/repository/MailerRepository.java
+/home/slouma/Desktop/kk/projet-soa-ecommerce-enit-2023-3AINFO2/mailing/src/main/java/org/acme/domain/UserEmailEntity.java
+/home/slouma/Desktop/kk/projet-soa-ecommerce-enit-2023-3AINFO2/mailing/src/main/java/org/acme/domain/TemplateEntity.java
 /home/slouma/Desktop/kk/projet-soa-ecommerce-enit-2023-3AINFO2/mailing/src/main/java/org/acme/service/MailerService.java
 /home/slouma/Desktop/kk/projet-soa-ecommerce-enit-2023-3AINFO2/mailing/src/main/java/org/acme/GreetingResource.java

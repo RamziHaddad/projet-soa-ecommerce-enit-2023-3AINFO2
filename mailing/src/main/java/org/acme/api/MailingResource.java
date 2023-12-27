@@ -13,7 +13,6 @@ public class MailingResource {
     @POST
     @Path("/ConfirmationPaiment")
     public void sendMailConfirmationPaiment(){
-
         this.mailerService.notifyConfirmationPaiment("slim", "slim.njah2@gmail.com");
 
     }
