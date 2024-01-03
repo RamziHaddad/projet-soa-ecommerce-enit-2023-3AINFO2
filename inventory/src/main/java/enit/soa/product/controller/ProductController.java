@@ -2,17 +2,25 @@ package enit.soa.product.controller;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
-
+import jakarta.ws.rs.core.UriInfo;
+import enit.soa.product.dto.CheckOrderRequestBody;
+import enit.soa.product.dto.CheckStockResponse;
 import enit.soa.product.dto.ProductDTO;
+import enit.soa.product.dto.checkStockResponse;
 import enit.soa.product.mapper.ProductMapper;
 import enit.soa.product.service.ProductService;
 
@@ -20,7 +28,7 @@ import org.eclipse.microprofile.faulttolerance.Fallback;
 import org.eclipse.microprofile.faulttolerance.Retry;
 import org.eclipse.microprofile.faulttolerance.Timeout;
 
-@Path("/products")
+@Path("stock")
 public class ProductController {
 
     @Inject
@@ -32,44 +40,43 @@ public class ProductController {
     private static final long RETRY_DELAY_MILLIS = 100; // 100 milliseconds delay between retries
     private static final Logger logger = Logger.getLogger(ProductController.class.getName());
 
-    
     @GET
-    @Path("/{id}")
+    @Path("product/{id}")
     @Timeout(1000)
     @Fallback(fallbackMethod = "fallbackMethod")
-   @Retry(maxRetries = 3) // Set the maximum number of retries
-   public Response get(@PathParam("id") String id) {
-    try {
-        ProductDTO product = productMapper.toDto(productService.findById(id));
-        if (product != null) {
-            logger.log(Level.INFO, "Product found: {0}", product);
-            // Reset retry count on success
-            currentRetry = 0;
-            return Response.ok(product).build();
-        } else {
-            logger.log(Level.WARNING, "Product not found with id: {0}", id);
+    @Retry(maxRetries = 3) // Set the maximum number of retries
+    public Response get(@PathParam("id") String id) {
+        try {
+            ProductDTO product = productMapper.toDto(productService.findById(id));
+            if (product != null) {
+                logger.log(Level.INFO, "Product found: {0}", product);
+                // Reset retry count on success
+                currentRetry = 0;
+                return Response.ok(product).build();
+            } else {
+                logger.log(Level.WARNING, "Product not found with id: {0}", id);
+                return Response.status(Status.NOT_FOUND).build();
+            }
+        } catch (NoSuchElementException e) {
+            logger.log(Level.WARNING, "Entity not found error getting product", e);
             return Response.status(Status.NOT_FOUND).build();
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Error getting product", e);
+            // Increment retry count
+            currentRetry++;
+            return Response.status(Status.INTERNAL_SERVER_ERROR)
+                    .entity("Internal Server Error: Max attempt of api call reached")
+                    .build();
         }
-    } catch (NoSuchElementException e) {
-        logger.log(Level.WARNING, "Entity not found error getting product", e);
-        return Response.status(Status.NOT_FOUND).build();
-    } catch (Exception e) {
-        logger.log(Level.SEVERE, "Error getting product", e);
-        // Increment retry count
-        currentRetry++;
+    }
+
+    // Fallback method
+    public Response fallbackMethod(String id) {
+        logger.log(Level.WARNING, "Fallback method called after attempt {0} failed", currentRetry);
         return Response.status(Status.INTERNAL_SERVER_ERROR)
-                .entity("Internal Server Error: Max attempt of api call reached")
+                .entity("Internal Server Error: Fallback after attempt " + currentRetry + " failed")
                 .build();
     }
-}
-
-// Fallback method
-public Response fallbackMethod(String id) {
-    logger.log(Level.WARNING, "Fallback method called after attempt {0} failed", currentRetry);
-    return Response.status(Status.INTERNAL_SERVER_ERROR)
-            .entity("Internal Server Error: Fallback after attempt " + currentRetry + " failed")
-            .build();
-}
 
     // @GET
     // public Response getAll() {
@@ -83,9 +90,8 @@ public Response fallbackMethod(String id) {
     // }
     // }
 
-    
     @POST
-    @Path("/add")
+    @Path("product/add")
     @Consumes(MediaType.APPLICATION_JSON)
     @Timeout(1000)
     @Retry(maxRetries = 3) // Set the maximum number of retries
@@ -125,7 +131,7 @@ public Response fallbackMethod(String id) {
     }
 
     @PUT
-    @Path("/{id}")
+    @Path("product/{id}")
     @Timeout(1000)
     @Retry(maxRetries = 3) // Set the maximum number of retries
     @Fallback(fallbackMethod = "fallbackMethodUpdate")
@@ -165,7 +171,7 @@ public Response fallbackMethod(String id) {
     }
 
     @DELETE
-    @Path("/{id}")
+    @Path("product/{id}")
     @Timeout(1000)
     @Retry(maxRetries = 3) // Set the maximum number of retries
     @Fallback(fallbackMethod = "fallbackMethodDelete")
@@ -201,6 +207,100 @@ public Response fallbackMethod(String id) {
         return Response.status(Status.INTERNAL_SERVER_ERROR)
                 .entity("Internal Server Error: Fallback after all attempts failed for delete")
                 .build();
+    }
+
+    @POST
+    @Path("/checkProducts")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timeout(1000)
+    @Retry(maxRetries = 3)
+    public boolean create(CheckOrderRequestBody checkOrderRequestBody) {
+        try {
+            // Iterate through the productMap
+            for (Map.Entry<UUID, Integer> entry : checkOrderRequestBody.getProducts().entrySet()) {
+                UUID productId = entry.getKey();
+                Integer requestedQuantity = entry.getValue();
+
+                // Fetch product details
+                ProductDTO product = productMapper.toDto(productService.findById(productId.toString()));
+
+                if (product.getTotalQuantity() == null || product.getTotalQuantity() < requestedQuantity) {
+                    // Product verification failed
+                    // Log the failure
+                    logger.log(Level.INFO,
+                            "Product verification failed for orderId={0}, productId={1}, requestedQuantity={2}",
+                            new Object[] { checkOrderRequestBody.getOrderId(), productId, requestedQuantity });
+
+                    return false; // Return false if any product verification fails
+                }
+
+                // Log product verification success
+                logger.log(Level.INFO,
+                        "Product verification successful for orderId={0}, productId={1}, requestedQuantity={2}",
+                        new Object[] { checkOrderRequestBody.getOrderId(), productId, requestedQuantity });
+            }
+
+            // Log the creation of the response
+            logger.log(Level.INFO, "All products verified successfully for orderId={0}",
+                    checkOrderRequestBody.getOrderId());
+
+            return true; // Return true if all product verifications are successful
+        } catch (Exception e) {
+            // Log the exception
+            logger.log(Level.SEVERE, "Error in create method for orderId=" + checkOrderRequestBody.getOrderId(), e);
+
+            // Return false in case of an exception or handle the error case accordingly
+            return false;
+        }
+    }
+
+    @POST
+    @Path("/order/{orderId}/liberateProducts")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Timeout(1000)
+    @Retry(maxRetries = 3)
+    public void liberateProducts(CheckOrderRequestBody checkOrderRequestBody) throws Exception {
+        try {
+            // Iterate through the productMap
+            for (Map.Entry<UUID, Integer> entry : checkOrderRequestBody.getProducts().entrySet()) {
+                UUID productId = entry.getKey();
+                Integer requestedQuantity = entry.getValue();
+
+                // Fetch product details
+                ProductDTO product = productMapper.toDto(productService.findById(productId.toString()));
+
+                if (product.getTotalQuantity() == null || product.getTotalQuantity() < requestedQuantity) {
+                    // Product verification failed
+                
+                    logger.log(Level.INFO,
+                            "Product verification failed for orderId={0}, productId={1}, requestedQuantity={2}",
+                            new Object[] { checkOrderRequestBody.getOrderId(), productId, requestedQuantity });
+
+                    throw new Exception("Product verification failed for productId=" + productId);
+                }
+
+                // Log product verification success
+                logger.log(Level.INFO,
+                        "Product verification successful for orderId={0}, productId={1}, requestedQuantity={2}",
+                        new Object[] { checkOrderRequestBody.getOrderId(), productId, requestedQuantity });
+                product.setTotalQuantity(product.getTotalQuantity() + requestedQuantity);
+                // Update the stock quantity
+                productService.update(productMapper.toEntity(product));
+                // Log the stock liberation
+                logger.log(Level.INFO, "Stock liberated for orderId={0}, productId={1}, liberatedQuantity={2}",
+                        new Object[] { checkOrderRequestBody.getOrderId(), productId, requestedQuantity });
+            }
+
+            // Log the completion of the stock liberation process
+            logger.log(Level.INFO, "Stock liberation completed for orderId={0}", checkOrderRequestBody.getOrderId());
+
+        } catch (Exception e) {
+            // Log the exception
+            logger.log(Level.SEVERE,
+                    "Error in liberateProducts method for orderId=" + checkOrderRequestBody.getOrderId(), e);
+
+            throw new Exception("Stock liberation failed for orderId=" + checkOrderRequestBody.getOrderId(), e);
+        }
     }
 
 }
